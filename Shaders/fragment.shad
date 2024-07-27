@@ -1,0 +1,142 @@
+#version 330 core
+out vec4 FragColor;
+
+in vec2 TexCoord;
+in vec3 FragPos;
+
+uniform sampler2D texture1;
+uniform vec4 ourColor;
+
+struct Light {
+    vec3 position;
+    float innerRadius;
+    float outerRadius;
+    vec4 color;
+    float intensity;
+};
+
+struct ShadowCaster {
+    vec3 position;
+    vec2 size;
+    float angle;
+    bool isFlipped;
+};
+
+#define MAX_SHADOW_CASTERS 10
+uniform int numShadowCasters;
+uniform ShadowCaster shadowCasters[MAX_SHADOW_CASTERS];
+uniform sampler2D shadowCasterTextures[MAX_SHADOW_CASTERS];
+
+#define MAX_LIGHTS 10
+uniform int numLights;
+uniform Light lights[MAX_LIGHTS];
+
+// Global light
+uniform vec4 globalLightColor;
+
+bool lineSegmentIntersection(
+    vec2 p, vec2 pDir,
+    vec2 q, vec2 qDir,
+    out float t1, out float t2) {
+
+    float denom = qDir.y * pDir.x - qDir.x * pDir.y;
+    if (abs(denom) < 0.0001) return false; // Lines are parallel
+
+    vec2 pq = p - q;
+    t2 = (pDir.x * pq.y - pDir.y * pq.x) / denom;
+    t1 = (qDir.x * pq.y - qDir.y * pq.x) / denom;
+
+    if (t1 >= 0.0 && t2 >= 0.0 && t2 <= 1.0) return true;
+    return false;
+}
+
+float pixelInShadow(vec3 fragPos, vec3 lightPos, vec3 objPos, vec2 objSize, float objAngle, sampler2D shadowTex, bool isFlipped) {
+    // Calculate the direction from the light to the object
+    vec2 lightToObj = vec2(objPos.xy - lightPos.xy);
+    float lightToObjAngle = atan(lightToObj.y, lightToObj.x);
+
+    // Define the four corners of the object's bounding box
+    vec2 halfSize = objSize * 0.5;
+    vec2 corners[4] = vec2[4](
+        objPos.xy + vec2(-halfSize.x, -halfSize.y),
+        objPos.xy + vec2(halfSize.x, -halfSize.y),
+        objPos.xy + vec2(halfSize.x, halfSize.y),
+        objPos.xy + vec2(-halfSize.x, halfSize.y)
+    );
+
+    // Rotate the corners based on the object's angle
+    vec2 rotatedCorners[4];
+    float cosAngle = cos(objAngle);
+    float sinAngle = sin(objAngle);
+    for (int i = 0; i < 4; i++) {
+        vec2 offset = corners[i] - objPos.xy;
+        rotatedCorners[i] = objPos.xy + vec2(
+            cosAngle * offset.x - sinAngle * offset.y,
+            sinAngle * offset.x + cosAngle * offset.y
+        );
+    }
+
+    // Check intersections with the edges of the bounding box
+    float closestT1 = 1.0;
+    vec2 fragToLight = vec2(fragPos.xy - lightPos.xy);
+    for (int i = 0; i < 4; i++) {
+        vec2 p0 = rotatedCorners[i];
+        vec2 p1 = rotatedCorners[(i + 1) % 4];
+        vec2 edgeDir = p1 - p0;
+
+        float t1, t2;
+        if (lineSegmentIntersection(lightPos.xy, fragToLight, p0, edgeDir, t1, t2)) {
+            if (t1 < closestT1) {
+                closestT1 = t1;
+            }
+        }
+    }
+
+    if (closestT1 < 1.0) {
+        return 0.0; // In shadow
+    }
+    return 1.0; // Not in shadow
+}
+
+void main()
+{
+    vec4 texColor = texture(texture1, TexCoord);
+    vec4 finalColor = texColor * ourColor;
+    vec3 totalLight = vec3(0.0);
+
+    for (int i = 0; i < numLights; i++)
+    {
+        Light light = lights[i];
+        float distance = length(light.position - FragPos);
+
+        if (distance < light.outerRadius)
+        {
+            float intensity = light.intensity;
+            if (distance > light.innerRadius)
+            {
+                intensity *= 1.0 - (distance - light.innerRadius) / (light.outerRadius - light.innerRadius);
+            }
+        
+            // Calculate shadow
+            float shadowFactor = 1.0;
+            for (int j = 0; j < numShadowCasters; j++) {
+                ShadowCaster caster = shadowCasters[j];
+                shadowFactor *= pixelInShadow(FragPos, light.position, caster.position, caster.size, caster.angle, shadowCasterTextures[j], caster.isFlipped);
+            }
+
+            totalLight += light.color.rgb * intensity * shadowFactor;
+        }
+    }
+
+    // Apply global light color
+    totalLight += globalLightColor.rgb;
+
+    // Combine finalColor with total light contribution
+    finalColor.rgb *= totalLight;
+
+    // Clamp final color
+    finalColor.rgb = clamp(finalColor.rgb, 0.0, 1.0);
+
+    // Output the final color
+    FragColor = finalColor;
+}
