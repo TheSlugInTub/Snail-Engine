@@ -403,11 +403,6 @@ void ObjectManager::RenderAll(Camera& camera, Renderer& renderer)
 
     globalCamera = &camera;
 
-    if (!playMode)
-    {
-        renderer.RenderRope(globalCamera->corners, view, projection);
-    }
-
     for (auto& object : objects)
     {
         renderer.RenderObject(*object, view, projection, lights, casters);
@@ -441,6 +436,11 @@ void ObjectManager::RenderAll(Camera& camera, Renderer& renderer)
                 object->notLoadedCustomShape = true;
             }
         }
+    }
+
+    if (!playMode)
+    {
+        renderer.RenderRope(globalCamera->corners, view, projection);
     }
 }
 

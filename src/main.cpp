@@ -24,7 +24,7 @@ int frameCount = 0;
 float fps = 0.0f;
 
 bool started;
-bool playMode = true;
+bool playMode = false;
 
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 {
@@ -253,13 +253,6 @@ int main()
 			if (objectManager)
 			{
 				objectManager->DrawImGui(world);
-				for (auto& object : objectManager->objects)
-				{
-					if (object->currentAnimation) {
-						object->currentAnimation->Update(0.016f);
-						object->texture = object->currentAnimation->GetCurrentFrame();
-					}
-				}
 			}
 
 			ImGui::PopFont();
@@ -274,14 +267,13 @@ int main()
 				ImGui::RenderPlatformWindowsDefault();
 				glfwMakeContextCurrent(backup_current_context);
 			}
-		}else
+		}
+
+		for (auto& object : objectManager->objects)
 		{
-			for (auto& object : objectManager->objects)
-			{
-				if (object->currentAnimation) {
-					object->currentAnimation->Update(0.016f);
-					object->texture = object->currentAnimation->GetCurrentFrame();
-				}
+			if (object->currentAnimation) {
+				object->currentAnimation->Update(0.016f);
+				object->texture = object->currentAnimation->GetCurrentFrame();
 			}
 		}
 
