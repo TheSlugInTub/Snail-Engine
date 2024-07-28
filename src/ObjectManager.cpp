@@ -43,6 +43,20 @@ void ObjectManager::AddObject(b2Body* body, unsigned int texture, glm::vec2 scal
     objects.push_back(object);
 }
 
+void ObjectManager::RemoveObject(const std::shared_ptr<Object> obj)
+{
+    auto it = std::find(objects.begin(), objects.end(), obj);
+
+    // If found, erase it
+    if (it != objects.end()) {
+        objects.erase(it);
+        if (obj->body) {
+            globalWorld->DestroyBody(obj->body); 
+        }
+    }
+    selectedObjectIndex = -1; 
+}
+
 void ObjectManager::UpdateAllTransforms()
 {
     for (auto& object : objects)

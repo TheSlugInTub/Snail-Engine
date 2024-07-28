@@ -26,6 +26,7 @@ class ObjectManager
 {
 public:
     void AddObject(b2Body* body, unsigned int texture, glm::vec2 scale, b2BodyType type, float rotation = 0.0f, glm::vec3 position = glm::vec3(0.0f), glm::vec4 color = glm::vec4(1.0f));
+    void RemoveObject(const std::shared_ptr<Object> obj);
     void UpdateAllTransforms();
     void DrawImGui(b2World& world);
     void RenderAll(Camera& camera, Renderer& renderer);

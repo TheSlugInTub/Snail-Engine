@@ -105,6 +105,9 @@ void MyScript::Update() {
                 {
                     bodyOne->body->SetTransform(b2Vec2(coords.x, coords.y), bodyOne->body->GetAngle());
                 }
+
+                auto jbo = objectManager->FindObjectByName(collidingObjectName);
+                objectManager->RemoveObject(jbo);
             }
 
             if (GetMouseButtonDown(MouseKey::RightClick) && !sceneChanged)

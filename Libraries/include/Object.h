@@ -71,6 +71,17 @@ public:
 			return false;
 		}
 	}
+	bool operator==(const std::shared_ptr<Object>& other) const {
+		if (other->position == position && other->color == color && other->body == body && other->name == name && other->scale == scale && other->texture == texture)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 private:
 
 };
