@@ -531,6 +531,8 @@ void ObjectManager::LoadScene(std::string sceneName)
 
     selectedSceneIndex = static_cast<int>(index);
     LoadObjects(scenes[selectedSceneIndex], *globalWorld);
+
+    PlayScene();
 }
 
 std::shared_ptr<Object> ObjectManager::FindObjectByName(std::string name)
@@ -732,7 +734,7 @@ void ObjectManager::StopScene(b2World& world)
 
     ScriptFactory::Instance().GetCanvas()->Clear();
 
-    if (playMode)
+    if (!playMode)
     {
         LoadObjects(scenes[selectedSceneIndex], world);
     }

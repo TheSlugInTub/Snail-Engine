@@ -7,7 +7,9 @@ Animation::Animation(std::vector<unsigned int> frames, float frameDuration)
     : frames(frames), frameDuration(frameDuration), currentTime(0.0f), currentFrame(0), isAnimating(false) {}
 
 void Animation::Update(float deltaTime) {
-    if (!isAnimating) return;
+    if (!isAnimating) {
+        return;
+    }
     currentTime += deltaTime;
     if (currentTime >= frameDuration) {
         currentFrame = (currentFrame + 1) % frames.size();

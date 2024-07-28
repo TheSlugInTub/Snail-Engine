@@ -142,6 +142,7 @@ int main()
 					objectManager->LoadObjects(objectManager->scenes[objectManager->selectedSceneIndex], world);
 					objectManager->PlayScene();
 					objectManager->playMode = true;
+					objectManager->SaveObjects(objectManager->scenes[objectManager->selectedSceneIndex]);
 					worldStep = true;
 				}
 
@@ -230,6 +231,7 @@ int main()
 					objectManager->LoadScenes();
 					objectManager->selectedSceneIndex = 0;
 					objectManager->LoadObjects(objectManager->scenes[objectManager->selectedSceneIndex], world);
+					objectManager->SaveObjects(objectManager->scenes[objectManager->selectedSceneIndex]);
 				}
 			}
 

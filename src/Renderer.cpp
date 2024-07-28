@@ -107,54 +107,6 @@ void Renderer::RenderObject(Object& object, const glm::mat4& view, const glm::ma
 void Renderer::RenderBodyVertices(Shader& shader, Camera& camera, Object& object, const glm::mat4& view, const glm::mat4& projection)
 {
     std::vector<glm::vec2> vertices;
-    for (b2Fixture* f = object.body->GetFixtureList(); f; f = f->GetNext()) {
-        if (f->GetType() == b2Shape::e_polygon) {
-            b2PolygonShape* shape = (b2PolygonShape*)f->GetShape();
-            for (int i = 0; i < shape->m_count; ++i) {
-                b2Vec2 vertex = object.body->GetWorldPoint(shape->m_vertices[i]);
-                vertices.push_back(glm::vec2(vertex.x, vertex.y));
-            }
-        }
-    }
-
-    GLuint VAO, VBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec2), vertices.data(), GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    shader.use();
-
-    shader.setMat4("view", view);
-    shader.setMat4("projection", projection);
-    shader.setVec4("lineColor", glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-
-    glm::mat4 model = glm::mat4(1.0f);
-    shader.setMat4("model", model);
-
-    // Draw lines
-    glDrawArrays(GL_LINE_LOOP, 0, vertices.size());
-
-    // Draw points
-    glPointSize(10.0f);
-    glDrawArrays(GL_POINTS, 0, vertices.size());
-
-    // Cleanup
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-    glDeleteBuffers(1, &VBO);
-    glDeleteVertexArrays(1, &VAO);
-}
-
-void Renderer::RenderCustomShape(Shader& shader, Camera& camera, Object& object, const glm::mat4& view, const glm::mat4& projection)
-{    
-    std::vector<glm::vec2> vertices;
 
     // Iterate over all fixtures in the object's body
     for (b2Fixture* f = object.body->GetFixtureList(); f; f = f->GetNext()) {
@@ -191,15 +143,71 @@ void Renderer::RenderCustomShape(Shader& shader, Camera& camera, Object& object,
     shader.setMat4("projection", projection);
     shader.setVec4("lineColor", glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 
-
     glm::mat4 model = glm::mat4(1.0f);
     shader.setMat4("model", model);
 
     // Draw the polygon lines
+    if (!vertices.empty()) {
+        glDrawArrays(GL_LINE_LOOP, 0, vertices.size());
+
+        // Draw points to highlight the vertices
+        glPointSize(10.0f);
+        glDrawArrays(GL_POINTS, 0, vertices.size());
+    }
+
+    // Unbind and delete VAO and VBO
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+    glDeleteBuffers(1, &VBO);
+    glDeleteVertexArrays(1, &VAO);
+}
+
+void Renderer::RenderCustomShape(Shader& shader, Camera& camera, Object& object, const glm::mat4& view, const glm::mat4& projection)
+{    
+    std::vector<glm::vec2> vertices;
+
+    // Iterate over all fixtures in the object's body
+    for (b2Fixture* f = object.body->GetFixtureList(); f; f = f->GetNext()) {
+        if (f->GetType() == b2Shape::e_polygon) {
+            b2PolygonShape* shape = (b2PolygonShape*)f->GetShape();
+            for (int i = 0; i < shape->m_count; ++i) {
+                b2Vec2 vertex = object.body->GetWorldPoint(shape->m_vertices[i]);
+                vertices.push_back(glm::vec2(vertex.x, vertex.y));
+            }
+        }
+    }
+    
+    // Create and bind VAO and VBO
+    GLuint VAO, VBO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec2), vertices.data(), GL_STATIC_DRAW);
+
+    // Define vertex attribute
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    // Use the shader program
+    shader.use();
+
+    // Set shader uniforms
+    shader.setMat4("view", view);
+    shader.setMat4("projection", projection);
+    shader.setVec4("lineColor", glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+
+    glm::mat4 model = glm::mat4(1.0f);
+    shader.setMat4("model", model);
+
+    // Draw the polygon outline
+    glLineWidth(2.0f);
     glDrawArrays(GL_LINE_LOOP, 0, vertices.size());
 
     // Draw points to highlight the vertices
-    glPointSize(10.0f);
+    glPointSize(10.0f);  
     glDrawArrays(GL_POINTS, 0, vertices.size());
 
     // Unbind and delete VAO and VBO
