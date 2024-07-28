@@ -21,18 +21,10 @@ Object::Object(b2Body* objectBody, unsigned int objectTexture, glm::vec2 objectS
 
 void Object::UpdateTransform()
 {
-    if (body != nullptr)
+    if (body != nullptr && bodyStatic == false)
     {
-        if (bodyStatic == false)
-        {
-            position = glm::vec3(body->GetPosition().x, body->GetPosition().y, position.z);
-            rotation = body->GetAngle();
-        }
-    }
-
-    if (currentAnimation != nullptr) {
-        currentAnimation->Update(0.016f);
-        texture = currentAnimation->GetCurrentFrame();
+        position = glm::vec3(body->GetPosition().x, body->GetPosition().y, position.z);
+        rotation = body->GetAngle();
     }
 
     for (auto& script : scripts) {
@@ -213,12 +205,14 @@ void Object::AddAnimation(const std::string& name, Animation animation) {
 }
 
 void Object::SetCurrentAnimation(const std::string& name) {
-    if (animations.find(name) != animations.end()) {
-        if (currentAnimation != &animations[name]) {
+    auto it = animations.find(name);
+    if (it != animations.end()) {
+        std::shared_ptr<Animation> newAnimation = std::make_shared<Animation>(it->second);
+        if (currentAnimation != newAnimation) {
             if (currentAnimation) {
                 currentAnimation->Stop();
             }
-            currentAnimation = &animations[name];
+            currentAnimation = newAnimation;
             currentAnimation->Start();
         }
     }

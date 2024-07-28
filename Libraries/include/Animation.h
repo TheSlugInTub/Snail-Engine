@@ -12,6 +12,18 @@ public:
     void Start();
     void Stop();
 
+    bool operator==(const Animation& other) const
+    {
+        if (other.frames == frames)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
 private:
     std::vector<unsigned int> frames;
     float frameDuration; 

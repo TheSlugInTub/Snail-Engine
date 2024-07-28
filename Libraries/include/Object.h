@@ -57,7 +57,7 @@ public:
 	std::vector<std::shared_ptr<Object>> children;
 
 	std::map<std::string, Animation> animations;
-	Animation* currentAnimation = nullptr;
+	std::shared_ptr<Animation> currentAnimation = nullptr;
 
 	Tilemap* tilemap = nullptr;
 

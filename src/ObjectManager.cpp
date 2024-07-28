@@ -326,9 +326,11 @@ void ObjectManager::DrawImGui(b2World& world) {
         bool selected = selectedSceneIndex == static_cast<int>(i);
         if (ImGui::Selectable(sceneName.c_str(), selected)) {
             ScriptFactory::Instance().GetCanvas()->Clear();
+            StopScene(*globalWorld);
             SaveObjects(scenes[selectedSceneIndex]);
             selectedSceneIndex = static_cast<int>(i);
             LoadObjects(scenes[selectedSceneIndex], *globalWorld);
+            PlayScene();
         }
 
         ImGui::PopID();
@@ -550,7 +552,7 @@ void ObjectManager::LoadScene(std::string sceneName)
     StopScene(*globalWorld);
 
     selectedSceneIndex = static_cast<int>(index);
-    LoadObjects(scenes[selectedSceneIndex], *globalWorld);
+    LoadObjects(scenes[index], *globalWorld);
 
     PlayScene();
 }
@@ -564,6 +566,8 @@ std::shared_ptr<Object> ObjectManager::FindObjectByName(std::string name)
             return objects[i];
         }
     }
+
+    return nullptr;
 }
 
 std::vector<std::string> ObjectManager::FindAllObjectNames()

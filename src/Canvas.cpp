@@ -63,8 +63,9 @@ void Canvas::LoadFont(const std::string& fontPath) {
             texture,
             glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
             glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-            face->glyph->advance.x
+            static_cast<GLuint>(face->glyph->advance.x) 
         };
+
         characters.insert(std::pair<char, Character>(c, character));
     }
     Fonts.insert(std::pair<std::string, std::map<char, Character>>(fontPath, characters));
