@@ -27,6 +27,8 @@ GLFWwindow* initializeWindow(const char* title, int width, int height, bool isFu
         return nullptr;
     }
     glfwMakeContextCurrent(g_window);
+    glfwMaximizeWindow(g_window);
+
     glfwSetFramebufferSizeCallback(g_window, framebuffer_size_callback);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {

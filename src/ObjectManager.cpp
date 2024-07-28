@@ -362,10 +362,13 @@ void ObjectManager::DrawImGui(b2World& world) {
                 newSceneName = buffer;
                 if (!newSceneName.empty())
                 {
+                    std::filesystem::path scenePath = std::filesystem::path("Data") / (newSceneName + ".json");
+                    std::filesystem::path scenePath2 = newSceneName + ".json";
                     // Add the new scene with the specified name
-                    scenes.push_back(newSceneName + ".json");
-                    std::ofstream file(newSceneName + ".json");
+                    scenes.push_back(scenePath2.string());
+                    std::ofstream file(scenePath);
                     file << "null";
+                    file.close();
                 }
 
                 // Close the pop-up
@@ -441,24 +444,34 @@ void ObjectManager::RenderAll(Camera& camera, Renderer& renderer)
 
 void ObjectManager::SaveObjects(const std::string& filename) const {
 
+    std::filesystem::path directory = "Data";
+    // Ensure the directory exists
+    std::filesystem::create_directories(directory);
+
+    std::filesystem::path filePath = directory / filename;
+
     nlohmann::json j;
     for (const auto& obj : objects) {
         j.push_back(obj->toJson());
     }
-    std::ofstream file(filename);
-    file << j.dump(4); // Pretty print with 4 spaces
 
+    std::ofstream file(filePath);
+    file << j.dump(4); 
     SaveScenes();
 }
 
 void ObjectManager::LoadObjects(const std::string& filename, b2World& world) {
+
+    std::filesystem::path directory = "Data";
+    std::filesystem::path filePath = directory / filename;
+
     for (b2Body* body = world.GetBodyList(); body; ) {
         b2Body* nextBody = body->GetNext();
         world.DestroyBody(body);
         body = nextBody;
     }
 
-    std::ifstream file(filename);
+    std::ifstream file(filePath);
     if (!file.is_open()) {
         std::cerr << "Failed to open file: " << filename << std::endl;
         return;
@@ -482,33 +495,40 @@ void ObjectManager::LoadObjects(const std::string& filename, b2World& world) {
 
 void ObjectManager::SaveScenes() const
 {
-    nlohmann::json j;
-    j = scenes;  // The library automatically converts the vector to a JSON array
+    std::filesystem::path directory = "Data";
+    std::filesystem::create_directories(directory);
 
-    std::ofstream file("Scenes.json");
+    std::filesystem::path filePath = directory / "Scenes.json";
+
+    nlohmann::json j;
+    j = scenes;
+
+    std::ofstream file(filePath);
     if (file.is_open()) {
-        file << j.dump(4);  // Dump the JSON with 4 spaces indentation for readability
+        file << j.dump(4);
         file.close();
     }
     else {
-        std::cerr << "Could not open file for writing: " << "Scenes.json" << std::endl;
+        std::cerr << "Could not open file for writing: " << filePath << std::endl;
     }
 }
 
 void ObjectManager::LoadScenes() {
+    std::filesystem::path directory = "Data";
+    std::filesystem::path filePath = directory / "Scenes.json";
+
     std::vector<std::string> vec;
     nlohmann::json j;
 
-    std::ifstream file("Scenes.json");
+    std::ifstream file(filePath);
     if (file.is_open()) {
-        file >> j;  // Parse the JSON file into the json object
-        vec = j.get<std::vector<std::string>>();  // Convert the JSON array back to a vector
+        file >> j;  
+        vec = j.get<std::vector<std::string>>();  
         file.close();
     }
     else {
-        std::cerr << "Could not open file for reading: " << "Scenes.json" << std::endl;
+        std::cerr << "Could not open file for reading: " << filePath << std::endl;
     }
-
 
     scenes.clear();
     scenes = vec;
