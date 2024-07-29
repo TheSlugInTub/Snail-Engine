@@ -4,6 +4,8 @@
 #include <SnailFunctions.h>
 #include <Console.h>
 #include <ContactListener.h>
+#include <chrono>
+#include <thread>
 
 MyScript::MyScript() = default;
 MyScript::~MyScript() = default;
@@ -43,6 +45,7 @@ void MyScript::Update() {
     if (!ObjectName.empty())
     {
         ObjectManager* objectManager = ScriptFactory::Instance().GetManager();
+        objmanager = ScriptFactory::Instance().GetManager();
         auto bodyOne = objectManager->FindObjectByName(ObjectName);
 
         objectManager->globalCamera->updateShake(0.016f);
@@ -86,8 +89,6 @@ void MyScript::Update() {
 
             if (GetKeyDown(Key::Up))
             {
-                Console::Log("You just jumped!");
-
                 objectManager->globalCamera->Shake(0.2f, 0.15f);
                 b2Vec2 impulse(0.0f, 0.2f * JumpSpeed);
                 bodyOne->body->ApplyLinearImpulse(impulse, bodyOne->body->GetWorldCenter(), true);
@@ -106,8 +107,7 @@ void MyScript::Update() {
                     bodyOne->body->SetTransform(b2Vec2(coords.x, coords.y), bodyOne->body->GetAngle());
                 }
 
-                auto jbo = objectManager->FindObjectByName(collidingObjectName);
-                objectManager->RemoveObject(jbo);
+                InvokeFunction([this]() { FunctionToInvoke(); }, 0.5f);
             }
 
             if (GetMouseButtonDown(MouseKey::RightClick) && !sceneChanged)
@@ -158,6 +158,12 @@ void MyScript::DrawImGui() {
         }
         ImGui::EndCombo();
     }
+}
+
+void MyScript::FunctionToInvoke()
+{
+    auto jbo = objmanager->FindObjectByName(collidingObjectName);
+    objmanager->RemoveObject(jbo);
 }
 
 REGISTER_SCRIPT(MyScript)

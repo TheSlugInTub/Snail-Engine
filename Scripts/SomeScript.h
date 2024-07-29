@@ -21,12 +21,16 @@ public:
     void Update() override;
     void DrawImGui() override;
 
+    void FunctionToInvoke();
+
     float MovementSpeed = 1.0f;
     float JumpSpeed = 1.0f;
     std::string ObjectName = "";
     std::string collidingObjectName = "";
     bool hasAnimated = false;
     Script* script;
+
+    ObjectManager* objmanager;
 
     SoundDevice* mySoundDevice;
     Sound mySound;

@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <Camera.h>
 #include <Object.h>
+#include <chrono>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -42,5 +43,7 @@ unsigned int loadTexture(char const* path);
 bool IsPointInsideObject(const glm::vec2& point, Object& object);
 
 void setWindowIcon(GLFWwindow* window, const char* iconPath);
+
+void InvokeFunction(std::function<void()> func, int delayMilliseconds);
 
 #endif

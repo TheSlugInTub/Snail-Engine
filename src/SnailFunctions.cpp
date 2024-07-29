@@ -2,6 +2,7 @@
 #include <Window.h>
 #include <Console.h>
 #include <cstdlib>
+#include <thread>
 
 std::unordered_map<Key, int> keyMap = {
     { Key::A, GLFW_KEY_A },
@@ -189,4 +190,14 @@ void setWindowIcon(GLFWwindow* window, const char* iconPath) {
     else {
         std::cout << "Could not load window icon.";
     }
+}
+
+void InvokeFunction(std::function<void()> func, int delayMilliseconds) {
+    // Create a new thread to execute the function after the delay
+    std::thread([func, delayMilliseconds]() {
+        // Sleep for the specified duration
+        std::this_thread::sleep_for(std::chrono::seconds(delayMilliseconds));
+        // Call the provided function
+        func();
+        }).detach(); // Detach the thread so it runs independently
 }
