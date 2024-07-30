@@ -30,7 +30,6 @@ private:
     float currentTime; 
     int currentFrame;  
     bool isAnimating;  
-    bool flipHorizontal; 
 };
 
 #endif

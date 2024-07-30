@@ -10,6 +10,7 @@
 
 class Object;
 
+// Base script class, meant to be derived off of.
 class Script
 {
 public:
@@ -28,7 +29,9 @@ public:
 
 	bool startFrameEnded = false;
 
+	// Weak pointer to the object this script is attached to.
 	std::weak_ptr<Object> scriptObject;
+
 	bool editorScript = false;
 };
 

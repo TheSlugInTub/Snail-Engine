@@ -1,24 +1,28 @@
 #include <Canvas.h>
 #include <stb_image.h>
 
-Canvas::Canvas(int width, int height) : m_width(width), m_height(height) {
+Canvas::Canvas(int width, int height) : m_width(width), m_height(height) 
+{
     InitFreeType();
     InitOpenGL();
     LoadShader();
 }
 
-Canvas::~Canvas() {
+Canvas::~Canvas() 
+{
     FT_Done_FreeType(ft);
     delete shader;
 }
 
-void Canvas::InitFreeType() {
+void Canvas::InitFreeType() 
+{
     if (FT_Init_FreeType(&ft)) {
         std::cerr << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
     }
 }
 
-void Canvas::LoadFont(const std::string& fontPath) {
+void Canvas::LoadFont(const std::string& fontPath) 
+{
     if (Fonts.find(fontPath) != Fonts.end()) {
         // Font already loaded
         return;
@@ -73,7 +77,8 @@ void Canvas::LoadFont(const std::string& fontPath) {
     FT_Done_Face(face);
 }
 
-void Canvas::InitOpenGL() {
+void Canvas::InitOpenGL() 
+{
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glBindVertexArray(VAO);
@@ -87,21 +92,23 @@ void Canvas::InitOpenGL() {
     projection = glm::ortho(0.0f, static_cast<float>(m_width), 0.0f, static_cast<float>(m_height));
 }
 
-void Canvas::LoadShader() {
+void Canvas::LoadShader() 
+{
     shader = new Shader("Shaders/textvertex.shad", "Shaders/textfragment.shad");
     shader->use();
     shader->setMat4("projection", projection);
 }
 
-void Canvas::AddText(Text& text) {
-
+void Canvas::AddText(Text& text) 
+{
     LoadFont(text.font);
 
     Text newText = { text.text, text.font, text.scale, text.position, text.color};
     texts.push_back(newText);
 }
 
-void Canvas::RenderCanvas() {
+void Canvas::RenderCanvas() 
+{
     shader->use();
     glBindVertexArray(VAO);
 

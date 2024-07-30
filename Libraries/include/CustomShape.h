@@ -8,22 +8,26 @@
 #include <glm/glm.hpp>
 #include <json.hpp>
 
+// Used for a custom b2Body collider.
 struct CustomShape {
     std::vector<glm::vec2> vertices;
 
     CustomShape() {}
 
-    void AddVertex(const glm::vec2& vertex) {
+    void AddVertex(const glm::vec2& vertex) 
+    {
         vertices.push_back(vertex);
     }
 
-    void MoveVertex(int index, const glm::vec2& newPos) {
+    void MoveVertex(int index, const glm::vec2& newPos) 
+    {
         if (index >= 0 && index < vertices.size()) {
             vertices[index] = newPos;
         }
     }
 
-    nlohmann::json toJson() const {
+    nlohmann::json toJson() const 
+    {
         nlohmann::json j;
         for (const auto& vertex : vertices) {
             j.push_back({ vertex.x, vertex.y });

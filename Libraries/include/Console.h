@@ -13,6 +13,8 @@ public:
 
 private:
     static std::vector<std::string> messages;
+
+    // Used for when there are too many messages to display and it scrolls to the end.
     static bool scrollToBottom;
 };
 

@@ -8,6 +8,10 @@ Renderer::Renderer()
     defaultShader = newShader;
     lineShader = newLineShader;
 
+    /* 
+    These are vertices for rendering a triangle and the indices make it a quad, 
+    since those are all we need for a 2D renderer.
+    */
     float vertices[] = {
         // positions         // texture coords
          0.5f,  0.5f, 0.0f,  1.0f, 1.0f, // top right
@@ -36,7 +40,7 @@ Renderer::Renderer()
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    // color attribute
+    // texture attribute
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 }
@@ -45,6 +49,7 @@ void Renderer::RenderObject(Object& object, const glm::mat4& view, const glm::ma
 {
     if (object.color.w == 0)
     {
+        // If the alpha of the object is zero, then don't bother with rendering it.
         return;
     }
 
@@ -53,10 +58,12 @@ void Renderer::RenderObject(Object& object, const glm::mat4& view, const glm::ma
 
 	glm::mat4 transform = glm::mat4(1.0f);
 
+    // Matrix multiplication to calculate the transform.
 	transform = glm::translate(transform, glm::vec3(object.position.x, object.position.y, object.position.z));
 	transform = glm::rotate(transform, object.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
 	transform = glm::scale(transform, glm::vec3(object.scale.x, object.scale.y, 1.0f));
 
+    // Setting all the uniforms.
 	defaultShader.setMat4("transform", transform);
 	defaultShader.setMat4("view", view);
 	defaultShader.setMat4("projection", projection);
@@ -89,6 +96,7 @@ void Renderer::RenderObject(Object& object, const glm::mat4& view, const glm::ma
         defaultShader.setTexture2D("shadowCasterTextures[" + std::to_string(i) + "]", casters[i].texture, i + 1);
     }
 
+    // This changes the vertices of the quad if the object is flipped.
     float vertices[] = {
         // positions     // texture coords
         0.5f,  0.5f, 0.0f, object.isFlipped ? 0.0f : 1.0f, 1.0f,   // top right (flipped if true)

@@ -10,6 +10,7 @@
 #include <Animation.h>
 #include <Tilemap.h>
 
+// An object, these can only be created via the object manager.
 class Object : public std::enable_shared_from_this<Object>
 {
 public:
@@ -19,8 +20,7 @@ public:
 
 	nlohmann::json toJson() const;
 	static std::shared_ptr<Object> fromJson(const nlohmann::json& j, b2World& world);
-	void UpdateScripts();
-	void DrawScriptImGui();
+
 	void AddScript(std::unique_ptr<Script> script);
 	void RemoveScript(const std::string& scriptName);
 
@@ -53,12 +53,14 @@ public:
 
 	CustomShape shape;
 
+	// Parenting and child objects aren't implemented yet, but these are here because I'll implement it in the future.
 	std::shared_ptr<Object> parent = nullptr;
 	std::vector<std::shared_ptr<Object>> children;
 
 	std::map<std::string, Animation> animations;
 	std::shared_ptr<Animation> currentAnimation = nullptr;
 
+	// This really shouldn't be here, but I couldn't find another solution.
 	Tilemap* tilemap = nullptr;
 
 	bool operator==(const Object& other) const {

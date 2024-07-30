@@ -12,7 +12,8 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
     shakeDuration(0.0f),
     shakeIntensity(0.0f),
     shakeElapsed(0.0f),
-    originalPosition(position) {
+    PositionBeforeShake(position) 
+{
     Position = position;
     WorldUp = up;
     Yaw = yaw;
@@ -20,7 +21,8 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
     updateCameraVectors();
 }
 
-void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime) {
+void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime) 
+{
     float velocity = MovementSpeed * deltaTime;
     if (direction == CameraMovement::FORWARD)
         Position += Front * velocity;
@@ -36,7 +38,8 @@ void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime) {
         Position -= Up * velocity;
 }
 
-void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch) {
+void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch) 
+{
     xoffset *= MouseSensitivity;
     yoffset *= MouseSensitivity;
 
@@ -53,7 +56,8 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constr
     updateCameraVectors();
 }
 
-void Camera::ProcessMouseScroll(float yoffset) {
+void Camera::ProcessMouseScroll(float yoffset) 
+{
     if (Zoom >= 1.0f && Zoom <= 45.0f)
         Zoom -= yoffset;
     if (Zoom <= 1.0f)
@@ -62,15 +66,18 @@ void Camera::ProcessMouseScroll(float yoffset) {
         Zoom = 45.0f;
 }
 
-glm::mat4 Camera::GetViewMatrix() {
+glm::mat4 Camera::GetViewMatrix() 
+{
     return glm::lookAt(Position, Position + Front, Up);
 }
 
-float Camera::GetZoom() {
+float Camera::GetZoom() 
+{
     return Zoom;
 }
 
-void Camera::updateCameraVectors() {
+void Camera::updateCameraVectors() 
+{
     glm::vec3 front;
     front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
     front.y = sin(glm::radians(Pitch));
@@ -80,30 +87,32 @@ void Camera::updateCameraVectors() {
     Up = glm::normalize(glm::cross(Right, Front));
 }
 
-void Camera::Shake(float duration, float intensity) {
+void Camera::Shake(float duration, float intensity) 
+{
     isShaking = true;
     shakeDuration = duration;
     shakeIntensity = intensity;
     shakeElapsed = 0.0f;
-    originalPosition = Position;
+    PositionBeforeShake = Position;
 }
 
-void Camera::updateShake(float deltaTime) {
+void Camera::updateShake(float deltaTime) 
+{
     if (isShaking) {
         shakeElapsed += deltaTime;
         if (shakeElapsed < shakeDuration) {
             glm::vec3 shakeOffset = glm::ballRand(shakeIntensity);
-            Position = originalPosition + shakeOffset;
+            Position = PositionBeforeShake + shakeOffset;
         }
         else {
             isShaking = false;
-            Position = originalPosition;
+            Position = PositionBeforeShake;
         }
     }
 }
 
-glm::vec3 Camera::screenToWorldSpace(const glm::vec2& screenCoords) {
-
+glm::vec3 Camera::screenToWorldSpace(const glm::vec2& screenCoords) 
+{
     glm::vec2 viewportSize(getWindowSizeX(), getWindowSizeY());
 
     float zDepth = Position.z * 1.9f;
@@ -134,8 +143,13 @@ glm::vec3 Camera::screenToWorldSpace(const glm::vec2& screenCoords) {
     return glm::vec3(point_world);
 }
 
-glm::vec3 Camera::screenToWorldSpaceOriginal(const glm::vec2& screenCoords) {
-
+/* 
+This function exists to save the frustum corners of the camera in editor mode, 
+since the default screenToWorldSpace function depends on the current camera position, front, and all the other variables).
+This function relies on the camera save to convert screen to world space, only used to generate frustum corners in editor mode.
+*/
+glm::vec3 Camera::screenToWorldSpaceOriginal(const glm::vec2& screenCoords) 
+{
     glm::vec2 viewportSize(getWindowSizeX(), getWindowSizeY());
 
     float zDepth = Save.Position.z * 1.9f;
@@ -166,8 +180,8 @@ glm::vec3 Camera::screenToWorldSpaceOriginal(const glm::vec2& screenCoords) {
     return glm::vec3(point_world);
 }
 
-glm::vec2 Camera::worldToScreenSpace(const glm::vec3& worldCoords) {
-
+glm::vec2 Camera::worldToScreenSpace(const glm::vec3& worldCoords) 
+{
     glm::vec4 viewport(0.0f, 0.0f, getWindowSizeX(), getWindowSizeY());
 
     // Compute the model-view-projection matrix
@@ -220,6 +234,7 @@ std::vector<glm::vec2> Camera::GetFrustumCorners() {
     return corners;
 }
 
+// Sets the camera save's values, to the current camera values.
 void Camera::SaveOriginal()
 {
     Save.Position = Position;
@@ -229,6 +244,7 @@ void Camera::SaveOriginal()
     Save.WorldUp = WorldUp;
 }
 
+// Sets the current position, front... to the data stored in the camera save.
 void Camera::LoadOriginal()
 {
     Position = Save.Position;

@@ -19,6 +19,7 @@ enum class CameraMovement {
     DOWN
 };
 
+// This struct contains all the data about the camera's position, and is used for saving and loading the camera between scenes.
 struct CameraSave {
     glm::vec3 Position;
     glm::vec3 Front;
@@ -59,9 +60,8 @@ public:
     void ProcessKeyboard(CameraMovement direction, float deltaTime);
     void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true);
     void ProcessMouseScroll(float yoffset);
-    void PrintValues();
-
     glm::mat4 GetViewMatrix();
+
     float GetZoom();
     void Shake(float duration, float intensity);
     void updateShake(float deltaTime);
@@ -70,15 +70,16 @@ public:
     glm::vec3 screenToWorldSpaceOriginal(const glm::vec2& screenCoords);
     glm::vec2 worldToScreenSpace(const glm::vec3& worldCoords);
     float GetAspectRatio();
-    std::vector<glm::vec2> GetFrustumCorners();
 
     void SaveOriginal();
     void LoadOriginal();
-
     void SaveFrustumCorners();
+    std::vector<glm::vec2> GetFrustumCorners();
 
     void updateCameraVectors();
-
+    
+    // The camera save, this is used for loading different camera positions between scenes. 
+    // This holds the data of the camera you can see in the editor.
     CameraSave Save;
 
     glm::vec3 Position;
@@ -93,7 +94,6 @@ public:
 
     std::vector<glm::vec2> corners;
 private:
-
     float MovementSpeed;
     float MouseSensitivity;
 
@@ -101,7 +101,7 @@ private:
     float shakeDuration;
     float shakeIntensity;
     float shakeElapsed;
-    glm::vec3 originalPosition;
+    glm::vec3 PositionBeforeShake;
 };
 
 #endif // CAMERA_H

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CANVAS_H
+#define CANVAS_H
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -15,6 +16,7 @@
 #include <Shader.h>
 #include <Camera.h>
 
+// Character struct for freetype.
 struct Character 
 {
     GLuint TextureID;  
@@ -66,7 +68,6 @@ public:
     ~Canvas();
     void AddText(Text& text);
     void RenderCanvas();
-    void EditText(size_t index, const std::string& newText, float x, float y, float scale, glm::vec3 color);
     void Clear();
 
     std::vector<Text> texts;
@@ -85,3 +86,5 @@ private:
     Shader* shader;
     glm::mat4 projection;
 };
+
+#endif

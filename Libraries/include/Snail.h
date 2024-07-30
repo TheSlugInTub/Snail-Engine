@@ -15,6 +15,8 @@
 #include <glm/gtx/extended_min_max.hpp>
 #include <glm/gtx/norm.hpp>
 
+#include <Box2D/box2d/box2d.h>
+
 #include <Window.h>
 #include <SnailFunctions.h>
 #include <Shader.h>
@@ -26,3 +28,8 @@
 #include <ScriptFactory.h>
 #include <Console.h>
 #include <ContactListener.h>
+#include <Tilemap.h>
+#include <SoundBuffer.h>
+#include <SoundDevice.h>
+#include <SoundSource.h>
+#include <Animation.h>

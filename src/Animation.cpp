@@ -6,7 +6,8 @@ Animation::Animation()
 Animation::Animation(std::vector<unsigned int> frames, float frameDuration)
     : frames(frames), frameDuration(frameDuration), currentTime(0.0f), currentFrame(0), isAnimating(false) {}
 
-void Animation::Update(float deltaTime) {
+void Animation::Update(float deltaTime) 
+{
     if (!isAnimating) {
         return;
     }
@@ -17,16 +18,19 @@ void Animation::Update(float deltaTime) {
     }
 }
 
-unsigned int Animation::GetCurrentFrame() const {
+unsigned int Animation::GetCurrentFrame() const 
+{
     return frames[currentFrame];
 }
 
-void Animation::Start() {
-    isAnimating = true;
+void Animation::Start() 
+{
+    isAnimating = true; 
 }
 
-void Animation::Stop() {
-    isAnimating = false;
+void Animation::Stop() 
+{
+    isAnimating = false; 
     currentFrame = 0; 
     currentTime = 0.0f;
 }
