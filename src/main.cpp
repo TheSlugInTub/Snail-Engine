@@ -216,6 +216,7 @@ int main()
 					{
 						objectManager->scenes.push_back("MainScene.json");
 						objectManager->selectedSceneIndex = 0;
+						objectManager->cameraSaves.push_back(camera.Save);
 						objectManager->SaveObjects(objectManager->scenes[objectManager->selectedSceneIndex]);
 						objectManager->LoadObjects(objectManager->scenes[objectManager->selectedSceneIndex], world);
 					}
@@ -242,10 +243,18 @@ int main()
 				objectManager->SetAllResources();
 			}
 			ImGui::DragFloat("Time step", &timeStep);
-			if (ImGui::DragFloat3("Camera position", glm::value_ptr(camera.OriginalPosition)))
+
+			if (objectManager->cameraSaves.size() != 0)
 			{
-				camera.SaveFrustumCorners();
+				if (ImGui::DragFloat3("Camera position", glm::value_ptr(objectManager->cameraSaves[objectManager->selectedSceneIndex].Position)))
+				{
+					camera.SaveFrustumCorners();
+					objectManager->SaveCamera();
+					objectManager->LoadCamera();
+					camera.Save = objectManager->cameraSaves[objectManager->selectedSceneIndex];
+				}
 			}
+
 			ImGui::End();
 
 			Console::Draw();

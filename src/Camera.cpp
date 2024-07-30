@@ -138,7 +138,7 @@ glm::vec3 Camera::screenToWorldSpaceOriginal(const glm::vec2& screenCoords) {
 
     glm::vec2 viewportSize(getWindowSizeX(), getWindowSizeY());
 
-    float zDepth = OriginalPosition.z * 1.9f;
+    float zDepth = Save.Position.z * 1.9f;
 
     glm::mat4 projection = glm::perspective(glm::radians(GetZoom()), getAspectRatio(), 0.1f, 100.0f);
     glm::mat projInverse = glm::inverse(projection);
@@ -158,7 +158,7 @@ glm::vec3 Camera::screenToWorldSpaceOriginal(const glm::vec2& screenCoords) {
 
     glm::vec4 view_space_intersect = glm::vec4(ray_view * zDepth, 1.0f);
 
-    glm::mat4 view = glm::lookAt(OriginalPosition, OriginalPosition + OriginalFront, OriginalUp);
+    glm::mat4 view = glm::lookAt(Save.Position, Save.Position + Save.Front, Save.Up);
     glm::mat4 viewInverse = glm::inverse(view);
 
     glm::vec4 point_world = viewInverse * view_space_intersect;
@@ -222,20 +222,20 @@ std::vector<glm::vec2> Camera::GetFrustumCorners() {
 
 void Camera::SaveOriginal()
 {
-    OriginalPosition = Position;
-    OriginalFront = Front;
-    OriginalUp = Up;
-    OriginalRight = Right;
-    OriginalWorldUp = WorldUp;
+    Save.Position = Position;
+    Save.Front = Front;
+    Save.Up = Up;
+    Save.Right = Right;
+    Save.WorldUp = WorldUp;
 }
 
 void Camera::LoadOriginal()
 {
-    Position = OriginalPosition;
-    Front = OriginalFront;
-    Right = OriginalRight;
-    Up = OriginalUp;
-    WorldUp = OriginalWorldUp;
+    Position = Save.Position;
+    Front = Save.Front;
+    Right = Save.Right;
+    Up = Save.Up;
+    WorldUp = Save.WorldUp;
 }
 
 void Camera::SaveFrustumCorners()

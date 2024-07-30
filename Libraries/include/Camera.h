@@ -7,6 +7,8 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <json.hpp>
+#include <fstream>
 
 enum class CameraMovement {
     FORWARD,
@@ -15,6 +17,36 @@ enum class CameraMovement {
     RIGHT,
     UP,
     DOWN
+};
+
+struct CameraSave {
+    glm::vec3 Position;
+    glm::vec3 Front;
+    glm::vec3 Right;
+    glm::vec3 Up;
+    glm::vec3 WorldUp;
+
+    nlohmann::json CamToJson() const
+    {
+        nlohmann::json j = {
+            {"CamPosition", {Position.x, Position.y, Position.z}},
+            {"CamFront", {Front.x, Front.y, Front.z}},
+            {"CamRight", {Right.x, Right.y, Right.z}},
+            {"CamUp", {Up.x, Up.y, Up.z}},
+            {"CamWorldUp", {WorldUp.x, WorldUp.y, WorldUp.z}}
+        };
+
+        return j;
+    }
+
+    void JsonToCam(nlohmann::json& j)
+    {
+        Position = { j["CamPosition"][0], j["CamPosition"][1], j["CamPosition"][2] };
+        Front = { j["CamFront"][0], j["CamFront"][1], j["CamFront"][2] };
+        Right = { j["CamRight"][0], j["CamRight"][1], j["CamRight"][2] };
+        Up = { j["CamUp"][0], j["CamUp"][1], j["CamUp"][2] };
+        WorldUp = { j["CamWorldUp"][0], j["CamWorldUp"][1], j["CamWorldUp"][2] };
+    }
 };
 
 class Camera {
@@ -39,32 +71,31 @@ public:
     glm::vec2 worldToScreenSpace(const glm::vec3& worldCoords);
     float GetAspectRatio();
     std::vector<glm::vec2> GetFrustumCorners();
+
     void SaveOriginal();
     void LoadOriginal();
 
     void SaveFrustumCorners();
 
-    glm::vec3 Position;
-    glm::vec3 OriginalPosition;
-    glm::vec3 OriginalFront;
-    glm::vec3 OriginalRight;
-    glm::vec3 OriginalUp;
-    glm::vec3 OriginalWorldUp;
+    void updateCameraVectors();
 
+    CameraSave Save;
+
+    glm::vec3 Position;
     glm::vec3 Front;
     glm::vec3 Up;
     glm::vec3 Right;
     glm::vec3 WorldUp;
 
-    std::vector<glm::vec2> corners;
-private:
-    void updateCameraVectors();
-
+    float Zoom;
     float Yaw;
     float Pitch;
+
+    std::vector<glm::vec2> corners;
+private:
+
     float MovementSpeed;
     float MouseSensitivity;
-    float Zoom;
 
     bool isShaking;
     float shakeDuration;

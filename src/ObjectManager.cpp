@@ -340,11 +340,11 @@ void ObjectManager::DrawImGui(b2World& world) {
         bool selected = selectedSceneIndex == static_cast<int>(i);
         if (ImGui::Selectable(sceneName.c_str(), selected)) {
             ScriptFactory::Instance().GetCanvas()->Clear();
-            StopScene(*globalWorld);
             SaveObjects(scenes[selectedSceneIndex]);
             selectedSceneIndex = static_cast<int>(i);
+            globalCamera->Save = cameraSaves[selectedSceneIndex];
             LoadObjects(scenes[selectedSceneIndex], *globalWorld);
-            PlayScene();
+            globalCamera->SaveFrustumCorners();
         }
 
         ImGui::PopID();
@@ -385,6 +385,8 @@ void ObjectManager::DrawImGui(b2World& world) {
                     std::ofstream file(scenePath);
                     file << "null";
                     file.close();
+                    cameraSaves.push_back(globalCamera->Save);
+                    SaveCamera();
                 }
 
                 // Close the pop-up
@@ -472,12 +474,14 @@ void ObjectManager::SaveObjects(const std::string& filename) const {
     }
 
     std::ofstream file(filePath);
-    file << j.dump(4); 
+    file << j.dump(4);
+
+    SaveCamera();
     SaveScenes();
 }
 
 void ObjectManager::LoadObjects(const std::string& filename, b2World& world) {
-
+    
     std::filesystem::path directory = "Data";
     std::filesystem::path filePath = directory / filename;
 
@@ -507,6 +511,8 @@ void ObjectManager::LoadObjects(const std::string& filename, b2World& world) {
             std::cerr << "Failed to create object from JSON" << std::endl;
         }
     }
+
+    LoadCamera();
 }
 
 void ObjectManager::SaveScenes() const
@@ -517,6 +523,7 @@ void ObjectManager::SaveScenes() const
     std::filesystem::path filePath = directory / "Scenes.json";
 
     nlohmann::json j;
+
     j = scenes;
 
     std::ofstream file(filePath);
@@ -537,6 +544,7 @@ void ObjectManager::LoadScenes() {
     nlohmann::json j;
 
     std::ifstream file(filePath);
+
     if (file.is_open()) {
         file >> j;  
         vec = j.get<std::vector<std::string>>();  
@@ -553,7 +561,6 @@ void ObjectManager::LoadScenes() {
 void ObjectManager::LoadScene(std::string sceneName)
 {
     auto camera = ScriptFactory::Instance().GetManager()->globalCamera;
-    camera->LoadOriginal();
 
     int index = -1;
     auto it = std::find(scenes.begin(), scenes.end(), sceneName);
@@ -775,5 +782,51 @@ void ObjectManager::StopScene(b2World& world)
     if (!playMode)
     {
         LoadObjects(scenes[selectedSceneIndex], world);
+    }
+}
+
+void ObjectManager::SaveCamera() const
+{
+    std::filesystem::path directory = "Data";
+    std::filesystem::create_directories(directory);
+
+    std::filesystem::path filePath = directory / "Camera.json";
+
+    nlohmann::json j;
+
+    for (int i = 0; i < cameraSaves.size(); ++i)
+    {
+        j.push_back(cameraSaves[i].CamToJson());
+    }
+
+    std::ofstream file(filePath);
+    if (file.is_open()) {
+        file << j.dump(4);
+        file.close();
+    }
+    else {
+        std::cerr << "Could not open file for writing: " << filePath << std::endl;
+    }
+}
+
+void ObjectManager::LoadCamera() {
+    std::filesystem::path directory = "Data";
+    std::filesystem::path filePath = directory / "Camera.json";
+
+    std::ifstream file(filePath);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file: " << "Camera.json" << std::endl;
+        return;
+    }
+
+    nlohmann::json j;
+    file >> j;
+
+    cameraSaves.clear();
+
+    for (auto& camJson : j) {
+        CameraSave save;
+        save.JsonToCam(camJson);
+        cameraSaves.push_back(save);
     }
 }

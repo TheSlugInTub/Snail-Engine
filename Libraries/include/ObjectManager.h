@@ -60,6 +60,9 @@ public:
 
     void DrawObjectTree(std::shared_ptr<Object> obj, int depth);
 
+    void SaveCamera() const;
+    void LoadCamera();
+
     void SetWorld(b2World& world);
 
     std::vector<std::string> texturePaths;
@@ -70,6 +73,8 @@ public:
     b2World* globalWorld;
 
     std::vector<std::string> scenes;
+    std::vector<CameraSave> cameraSaves;
+
     int selectedSceneIndex = -1;
 
     bool playMode = false;
