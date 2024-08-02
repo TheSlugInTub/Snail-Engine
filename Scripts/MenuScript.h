@@ -1,16 +1,16 @@
-#ifndef TILEMAP_SCRIPT
-#define TILEMAP_SCRIPT
+#ifndef BUTTON_SCRIPT
+#define BUTTON_SCRIPT
 
 #include "Script.h"
 #include <ScriptFactory.h>
 #include <glm/glm.hpp>
 #include <string>
 
-class TilemapScript : public Script
+class MenuScript : public Script
 {
 public:
-    TilemapScript();
-    ~TilemapScript() override;
+    MenuScript();
+    ~MenuScript() override;
 
     nlohmann::json toJson() const override;
     void fromJson(const nlohmann::json& j) override;
@@ -19,12 +19,6 @@ public:
     void Start() override;
     void Update() override;
     void DrawImGui() override;
-
-    std::vector<std::string> textures;
-    int selectedTileIndex;
-    std::string currentTexturePath;
-
-    Tilemap tilemap;
 };
 
 #endif

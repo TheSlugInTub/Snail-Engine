@@ -49,24 +49,27 @@ struct Text
 struct Button
 {
     std::string text;
+    std::string font;
     glm::vec2 position;
-    glm::vec2 size;
+    glm::vec2 buttonSize;
+    glm::vec2 textSize;
     glm::vec4 backgroundColor;
-    glm::vec4 textColor;
+    glm::vec4 textColor = glm::vec4(1.0f);
+    std::string eventCallback = "DefaultEvent";
 
     bool operator==(const Button& other) const
     {
-        return text == other.text && position == other.position && size == other.size &&
+        return text == other.text && position == other.position && buttonSize == other.buttonSize &&
             backgroundColor == other.backgroundColor && textColor == other.textColor;
     }
 };
-
 
 class Canvas {
 public:
     Canvas(int width, int height);
     ~Canvas();
     void AddText(Text& text);
+    void AddButton(Button& button);
     void RenderCanvas();
     void Clear();
 
@@ -79,12 +82,18 @@ private:
     void InitOpenGL();
     void LoadShader();
 
+    bool isMouseOverButton(const glm::vec2& point, const Button& button);
+
     int m_width, m_height;
     std::map<std::string, std::map<char, Character>> Fonts;
     GLuint VAO, VBO;
+    GLuint buttonVAO, buttonVBO, buttonEBO;
     FT_Library ft;
     Shader* shader;
+    Shader* buttonShader;
     glm::mat4 projection;
+
+    unsigned int defaultTexture;
 };
 
 #endif

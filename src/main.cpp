@@ -78,10 +78,12 @@ int main()
 	std::unique_ptr<Renderer> renderer = std::make_unique<Renderer>();
 	CollisionListener* collisionListener = new CollisionListener();
 	Canvas canvas(screenWidth, screenHeight);
+	EventSystem eventSystem;
 	ScriptFactory::Instance().SetManager(std::move(objectManager));
 	ScriptFactory::Instance().SetRenderer(std::move(renderer));
 	ScriptFactory::Instance().SetListener(*collisionListener);
 	ScriptFactory::Instance().SetCanvas(canvas);
+	ScriptFactory::Instance().SetEventSystem(eventSystem);
 	world.SetContactListener(collisionListener);
 
 	double prevTime = 0.0;

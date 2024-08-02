@@ -171,3 +171,29 @@ glm::vec3 worldPosition = camera->screenToWorldSpace(glm::vec2(x, y));
 //Turn the world position back into screen space
 glm::vec2 screenPosition = camera->worldToScreenSpace(worldPosition);
 ```
+
+## Event System
+
+All buttons in the engine are connected to the event system. You can assign an event name to the button in the editor, and in another script,
+you can define the function and register the event in the event system. Here's how you can get acess to the event system:
+
+```cpp
+EventSystem* eventSystem = ScriptFactory::Instance().GetEventSystem();
+```
+And here's how you can register an event.
+
+```cpp
+void CallbackEvent() //Make the callback function
+{
+	Console::Log("Event called!");
+}
+
+//Register the callback in the list of events
+eventManager->RegisterCallback("Test", CallbackEvent);
+
+//Trigger the event so that CallbackEvent() is called.
+eventManager->TriggerEvent("Test");
+```
+
+For buttons, the triggering of the event is called for you, you just need to set the event name in the editor,
+the same as the event name in the code which in this example is "Test".

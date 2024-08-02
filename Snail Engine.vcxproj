@@ -151,6 +151,9 @@
     <ClCompile Include="Libraries\include\imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="Libraries\include\imgui\imgui_tables.cpp" />
     <ClCompile Include="Libraries\include\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Scripts\ButtonScript.cpp" />
+    <ClCompile Include="Scripts\MenuScript.cpp" />
+    <ClCompile Include="Scripts\MenuScript.h" />
     <ClCompile Include="Scripts\TextScript.cpp" />
     <ClCompile Include="Scripts\TilemapScript.cpp" />
     <ClCompile Include="src\Animation.cpp" />
@@ -158,6 +161,7 @@
     <ClCompile Include="src\Canvas.cpp" />
     <ClCompile Include="src\Console.cpp" />
     <ClCompile Include="Scripts\LightScript.cpp" />
+    <ClCompile Include="src\EventSystem.cpp" />
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Object.cpp" />
@@ -180,8 +184,10 @@
     <ClInclude Include="Libraries\include\Canvas.h" />
     <ClInclude Include="Libraries\include\Console.h" />
     <ClInclude Include="Libraries\include\ContactListener.h" />
+    <ClInclude Include="Libraries\include\EventSystem.h" />
     <ClInclude Include="Libraries\include\ft2build.h" />
     <ClInclude Include="Libraries\include\Tilemap.h" />
+    <ClInclude Include="Scripts\ButtonScript.h" />
     <ClInclude Include="Scripts\ShadowCasterScript.h" />
     <ClInclude Include="Libraries\include\SoundDevice.h" />
     <ClInclude Include="Libraries\include\SoundSource.h" />
@@ -220,8 +226,9 @@
     <None Include="Shaders\linevertex.shad" />
     <None Include="Shaders\textfragment.shad" />
     <None Include="Shaders\textvertex.shad" />
+    <None Include="Shaders\uifragment.shad" />
+    <None Include="Shaders\uivertex.shad" />
     <None Include="Shaders\vertex.shad" />
-    <None Include="src\save.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

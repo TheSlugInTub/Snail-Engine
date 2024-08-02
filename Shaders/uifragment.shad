@@ -1,0 +1,17 @@
+#version 330 core
+
+in vec2 TexCoord;  // Input texture coordinate from vertex shader
+
+out vec4 FragColor;  // Output color of the fragment
+
+uniform sampler2D texture1;
+uniform vec4 color;        
+uniform vec4 hoverColor;   
+uniform bool isHovered;    
+
+void main()
+{
+    vec4 texColor = texture(texture1, TexCoord);  // Sample the color from the texture
+    vec4 finalColor = mix(color, hoverColor, isHovered ? 1.0 : 0.0); // Mix base color with hover color
+    FragColor = texColor * finalColor;  // Multiply texture color with final color
+}

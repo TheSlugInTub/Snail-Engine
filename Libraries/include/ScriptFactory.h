@@ -2,10 +2,11 @@
 #define SCRIPT_FACTORY_H
 
 #include <Script.h>
-#include <iostream> // For debug output
+#include <iostream>
 #include <ObjectManager.h>
 #include <ContactListener.h>
 #include <Canvas.h>
+#include <EventSystem.h>
 
 class ScriptFactory
 {
@@ -87,12 +88,25 @@ public:
         return globalCanvas;
     }
 
+    void SetEventSystem(EventSystem& manager)
+    {
+        globalEventSystem = &manager;
+    }
+
+    // Get the global object manager
+    EventSystem* GetEventSystem() const
+    {
+        return globalEventSystem;
+    }
+
+
 private:
     ScriptFactory() = default;
     std::unordered_map<std::string, ScriptCreator> creators;
     std::unique_ptr<ObjectManager> globalManager;
     std::unique_ptr<Renderer> globalRenderer;
     CollisionListener* globalListener;
+    EventSystem* globalEventSystem;
     Canvas* globalCanvas;
 };
 

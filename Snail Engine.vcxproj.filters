@@ -102,6 +102,18 @@
     <ClCompile Include="Scripts\TilemapScript.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Scripts\ButtonScript.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EventSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\MenuScript.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\MenuScript.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libraries\include\Window.h">
@@ -218,14 +230,21 @@
     <ClInclude Include="Scripts\TilemapScript.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Libraries\include\EventSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\ButtonScript.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\vertex.shad" />
     <None Include="Shaders\fragment.shad" />
     <None Include="Shaders\linevertex.shad" />
     <None Include="Shaders\linefragment.shad" />
-    <None Include="src\save.json" />
     <None Include="Shaders\textvertex.shad" />
     <None Include="Shaders\textfragment.shad" />
+    <None Include="Shaders\uivertex.shad" />
+    <None Include="Shaders\uifragment.shad" />
   </ItemGroup>
 </Project>
