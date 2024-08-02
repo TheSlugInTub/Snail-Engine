@@ -201,3 +201,19 @@ void InvokeFunction(std::function<void()> func, int delayMilliseconds) {
         func();
         }).detach(); // Detach the thread so it runs independently
 }
+
+void QuitProgram() {
+    // Make sure the window is valid
+    GLFWwindow* window = getWindow();
+
+    if (window) {
+        // Destroy the window
+        glfwDestroyWindow(window);
+    }
+
+    // Terminate GLFW
+    glfwTerminate();
+
+    // Exit the program
+    exit(0);
+}

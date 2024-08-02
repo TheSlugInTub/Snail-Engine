@@ -40,7 +40,7 @@ void SettingsEvent()
 
 void QuitEvent()
 {
-    Console::Log("quit");
+    QuitProgram();
 }
 
 void BackEvent()

@@ -48,4 +48,6 @@ void setWindowIcon(GLFWwindow* window, const char* iconPath);
 
 void InvokeFunction(std::function<void()> func, int delayMilliseconds);
 
+void QuitProgram();
+
 #endif
