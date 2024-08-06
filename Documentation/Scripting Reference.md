@@ -197,3 +197,24 @@ eventManager->TriggerEvent("Test");
 
 For buttons, the triggering of the event is called for you, you just need to set the event name in the editor,
 the same as the event name in the code which in this example is "Test".
+
+## Physics
+
+Snail Engine uses Box2D as it's physics engine. Every object in the scene has a b2Body, which is a Box2D rigidbody.
+Here is an example of moving an object by moving it's b2Body.
+
+```cpp
+b2Vec2 pos = object->body->GetPosition();
+pos.x += 0.4 * MovementSpeed;
+object->body->SetTransform(pos, object->body->GetAngle());
+/*
+This is here for making the b2Body awake, if you just set the transform, 
+the b2Body becomes static and doesn't respond to collisions. 
+So just add a tiny little force to wake the body up.
+*/
+b2Vec2 force(0.00001f, 0.0f);
+object->body->ApplyForceToCenter(force, true); 
+```
+
+The code above me uses several functions from Box2D, and makes the object move a little bit in the X direction.
+You'll have to look into the Box2D documentation to fully grasp how to do physics stuff in the engine.

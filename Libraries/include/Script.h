@@ -19,7 +19,7 @@ public:
 
 	virtual nlohmann::json toJson() const = 0;
 	virtual void fromJson(const nlohmann::json& j) = 0; 
-	virtual std::string getTypeName() const = 0;
+	virtual std::string getTypeName() const = 0; // Getting the class name of the script.
 
 	virtual void Start() = 0;
 	virtual void Update() = 0;
@@ -32,6 +32,7 @@ public:
 	// Weak pointer to the object this script is attached to.
 	std::weak_ptr<Object> scriptObject;
 
+	// Dictates whether the update and start methods will run in the editor, or not.
 	bool editorScript = false;
 };
 

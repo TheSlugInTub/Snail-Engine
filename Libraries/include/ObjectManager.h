@@ -32,7 +32,8 @@ public:
     void UpdateAllTransforms();
     
     void DrawImGui(b2World& world);
-    
+    void DrawAnimationEditorInImGui(Object& obj);
+
     // Render all the objects in the scene.
     void RenderAll(Camera& camera, Renderer& renderer);
 
@@ -100,6 +101,9 @@ private:
 
     // Pop up for creating a new scene
     bool showSceneNamePopup = false;
+
+    bool showAddAnimationPopup = false;
+    std::string mewAnimationName;
 };
 
 #endif

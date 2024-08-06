@@ -4,6 +4,15 @@
 #include <cstdlib>
 #include <thread>
 
+#ifdef _WIN32
+#include <windows.h>
+#elif defined(__APPLE__) || defined(__linux__)
+#include <cstdio>
+#else
+#error "Platform not supported"
+#endif
+
+
 std::unordered_map<Key, int> keyMap = {
     { Key::A, GLFW_KEY_A },
     { Key::B, GLFW_KEY_B },
@@ -159,6 +168,8 @@ unsigned int loadTexture(char const* path)
         std::string pathString = path;
         Console::Log("Texture failed to load at path: " + pathString + "\n");
         stbi_image_free(data);
+
+        loadTexture("Resources/Textures/DefaultTexture.png");
     }
 
     return textureID;
@@ -216,4 +227,18 @@ void QuitProgram() {
 
     // Exit the program
     exit(0);
+}
+
+void MsgBox(const char* message) {
+#ifdef _WIN32
+    // Windows implementation
+    MessageBoxA(NULL, message, "Error", MB_ICONERROR | MB_OK);
+#elif defined(__APPLE__) || defined(__linux__)
+    // POSIX (Linux/macOS) implementation
+    std::cerr << "Error: " << message << std::endl;
+    std::cerr << "Press Enter to continue...";
+    std::cin.get();
+#else
+    std::cerr << "Platform not supported" << std::endl;
+#endif
 }

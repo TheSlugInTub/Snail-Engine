@@ -29,8 +29,7 @@ public:
 	void AddChild(std::shared_ptr<Object> child);
 	void RemoveChild(std::shared_ptr<Object> child);
 
-	void AddAnimation(const std::string& name, Animation animation);
-	void SetCurrentAnimation(const std::string& name);
+	void AddAnimation(Animation animation);
 	void Animate();
 	void StopAnimating();
 
@@ -57,8 +56,8 @@ public:
 	std::shared_ptr<Object> parent = nullptr;
 	std::vector<std::shared_ptr<Object>> children;
 
-	std::map<std::string, Animation> animations;
-	std::shared_ptr<Animation> currentAnimation = nullptr;
+	std::vector<Animation> animations;
+	Animation* currentAnimation = nullptr;
 
 	// This really shouldn't be here, but I couldn't find another solution.
 	Tilemap* tilemap = nullptr;

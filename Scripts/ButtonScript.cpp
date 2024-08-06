@@ -23,6 +23,7 @@ nlohmann::json ButtonScript::toJson() const
         {"textScale", {textScale.x, textScale.y}},
         {"buttonScale", {buttonScale.x, buttonScale.y}},
         {"backgroundColor", {backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w}},
+        {"hoverColor", {hoverColor.x, hoverColor.y, hoverColor.z, hoverColor.w}},
         {"eventName", eventName}
     };
 }
@@ -37,6 +38,7 @@ void ButtonScript::fromJson(const nlohmann::json& j)
     buttonScale = { j["buttonScale"][0], j["buttonScale"][1] };
     backgroundColor = { j["backgroundColor"][0], j["backgroundColor"][1], j["backgroundColor"][2], j["backgroundColor"][3] };
     eventName = j["eventName"];
+    hoverColor = { j["hoverColor"][0], j["hoverColor"][1], j["hoverColor"][2], j["hoverColor"][3] };
 }
 
 std::string ButtonScript::getTypeName() const
@@ -89,6 +91,7 @@ void ButtonScript::Update() {
         canvas->buttons[buttonIndex].buttonSize = buttonScale;
         canvas->buttons[buttonIndex].text = text;
         canvas->buttons[buttonIndex].backgroundColor = backgroundColor;
+        canvas->buttons[buttonIndex].hoverColor = hoverColor;
         canvas->buttons[buttonIndex].textColor = bodyOne->color;
         canvas->buttons[buttonIndex].eventCallback = eventName;
     }
@@ -118,6 +121,7 @@ void ButtonScript::DrawImGui() {
     }
 
     ImGui::ColorEdit4("Button background color", glm::value_ptr(backgroundColor));
+    ImGui::ColorEdit4("Button hover color", glm::value_ptr(hoverColor));
     ImGui::DragFloat2("Button scale", glm::value_ptr(buttonScale));
     ImGui::DragFloat2("Button text scale", glm::value_ptr(textScale));
 

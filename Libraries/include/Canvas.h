@@ -55,7 +55,9 @@ struct Button
     glm::vec2 textSize;
     glm::vec4 backgroundColor;
     glm::vec4 textColor = glm::vec4(1.0f);
+    glm::vec4 hoverColor = glm::vec4(1.0f);
     std::string eventCallback = "DefaultEvent";
+    bool isHovered = false;
 
     bool operator==(const Button& other) const
     {

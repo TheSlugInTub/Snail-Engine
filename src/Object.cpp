@@ -200,22 +200,8 @@ void Object::RemoveChild(std::shared_ptr<Object> child)
     child->parent = nullptr;
 }
 
-void Object::AddAnimation(const std::string& name, Animation animation) {
-    animations[name] = animation;
-}
-
-void Object::SetCurrentAnimation(const std::string& name) {
-    auto it = animations.find(name);
-    if (it != animations.end()) {
-        std::shared_ptr<Animation> newAnimation = std::make_shared<Animation>(it->second);
-        if (currentAnimation != newAnimation) {
-            if (currentAnimation) {
-                currentAnimation->Stop();
-            }
-            currentAnimation = newAnimation;
-            currentAnimation->Start();
-        }
-    }
+void Object::AddAnimation(Animation animation) {
+    animations.push_back(animation);
 }
 
 void Object::Animate() {

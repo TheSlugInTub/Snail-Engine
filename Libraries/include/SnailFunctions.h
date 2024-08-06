@@ -50,4 +50,6 @@ void InvokeFunction(std::function<void()> func, int delayMilliseconds);
 
 void QuitProgram();
 
+void MsgBox(const char* message);
+
 #endif

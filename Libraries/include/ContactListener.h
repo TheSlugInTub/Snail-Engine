@@ -18,39 +18,47 @@ struct pair_hash {
 class CollisionListener : public b2ContactListener {
 public:
     void BeginContact(b2Contact* contact) override {
-        // Store the collision status
         UpdateCollisionStatus(contact, true);
     }
 
     void EndContact(b2Contact* contact) override {
-        // Store the collision status
         UpdateCollisionStatus(contact, false);
     }
 
     bool AreBodiesColliding(b2Body* bodyA, b2Body* bodyB) const {
-        auto key1 = std::make_pair(bodyA, bodyB);
-        auto key2 = std::make_pair(bodyB, bodyA);
-        return collisionMap.count(key1) > 0 || collisionMap.count(key2) > 0;
+        auto itA = collisionMap.find(bodyA);
+        if (itA != collisionMap.end() && itA->second.count(bodyB) > 0) {
+            return true;
+        }
+        auto itB = collisionMap.find(bodyB);
+        return (itB != collisionMap.end() && itB->second.count(bodyA) > 0);
+    }
+
+    bool OnCollisionEnter(b2Body* body) const {
+        auto it = collisionMap.find(body);
+        return (it != collisionMap.end() && !it->second.empty());
     }
 
 private:
     void UpdateCollisionStatus(b2Contact* contact, bool isColliding) {
         b2Body* bodyA = contact->GetFixtureA()->GetBody();
         b2Body* bodyB = contact->GetFixtureB()->GetBody();
-        auto key1 = std::make_pair(bodyA, bodyB);
-        auto key2 = std::make_pair(bodyB, bodyA);
 
         if (isColliding) {
-            collisionMap.insert(key1);
-            collisionMap.insert(key2);
+            collisionMap[bodyA].insert(bodyB);
+            collisionMap[bodyB].insert(bodyA);
         }
         else {
-            collisionMap.erase(key1);
-            collisionMap.erase(key2);
+            collisionMap[bodyA].erase(bodyB);
+            collisionMap[bodyB].erase(bodyA);
+
+            // Clean up if the sets are empty
+            if (collisionMap[bodyA].empty()) collisionMap.erase(bodyA);
+            if (collisionMap[bodyB].empty()) collisionMap.erase(bodyB);
         }
     }
 
-    std::unordered_set<std::pair<b2Body*, b2Body*>, pair_hash> collisionMap;
+    std::unordered_map<b2Body*, std::unordered_set<b2Body*>> collisionMap;
 };
 
 #endif

@@ -208,7 +208,7 @@ void Canvas::RenderCanvas()
         }
     }
 
-    for (const auto& item : buttons)
+    for (auto& item : buttons)
     {
         buttonShader->use();
         buttonShader->setTexture2D("texture1", defaultTexture, 0);
@@ -222,7 +222,8 @@ void Canvas::RenderCanvas()
         buttonShader->setMat4("transform", transform);
         buttonShader->setMat4("projection", projection);
         buttonShader->setVec4("color", item.backgroundColor);
-        buttonShader->setBool("isHovered", false);
+        buttonShader->setVec4("hoverColor", item.hoverColor);
+        buttonShader->setBool("isHovered", item.isHovered);
 
         // Render the button
         glBindVertexArray(buttonVAO);
@@ -289,9 +290,16 @@ void Canvas::RenderCanvas()
         glm::vec2 mousePos = glm::vec2(mouseX, mouseY);
 
         if (isMouseOverButton(mousePos, item)) {
+
+            item.isHovered = true;
+
             if (GetMouseButtonDown(MouseKey::LeftClick)) { 
                 ScriptFactory::Instance().GetEventSystem()->TriggerEvent(item.eventCallback);
             }
+        }
+        else
+        {
+            item.isHovered = false;
         }
     }
 
@@ -310,7 +318,7 @@ bool Canvas::isMouseOverButton(const glm::vec2& mousePos, const Button& button)
     glm::vec2 objectPos = button.position;
 
     // Invert the Y position of the button
-    float offset = getWindowSizeY() - 63;
+    float offset = getWindowSizeY() - 70;
     objectPos.y = offset - objectPos.y;
 
     glm::vec2 minBounds = objectPos - button.buttonSize * 0.5f;

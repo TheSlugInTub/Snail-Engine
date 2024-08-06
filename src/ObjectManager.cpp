@@ -322,6 +322,8 @@ void ObjectManager::DrawImGui(b2World& world) {
         }
 
         ImGui::End();
+
+        DrawAnimationEditorInImGui(*obj);
     }
 
     ImGui::Begin("Scenes");
@@ -485,16 +487,16 @@ void ObjectManager::LoadObjects(const std::string& filename, b2World& world) {
     std::filesystem::path directory = "Data";
     std::filesystem::path filePath = directory / filename;
 
-    for (b2Body* body = world.GetBodyList(); body; ) {
-        b2Body* nextBody = body->GetNext();
-        world.DestroyBody(body);
-        body = nextBody;
-    }
-
     std::ifstream file(filePath);
     if (!file.is_open()) {
         std::cerr << "Failed to open file: " << filename << std::endl;
         return;
+    }
+
+    for (b2Body* body = world.GetBodyList(); body; ) {
+        b2Body* nextBody = body->GetNext();
+        world.DestroyBody(body);
+        body = nextBody;
     }
 
     nlohmann::json j;
@@ -552,6 +554,8 @@ void ObjectManager::LoadScenes() {
     }
     else {
         std::cerr << "Could not open file for reading: " << filePath << std::endl;
+        MsgBox("Data directory is empty, no scenes to load.");
+        return;
     }
 
     scenes.clear();
@@ -828,5 +832,126 @@ void ObjectManager::LoadCamera() {
         CameraSave save;
         save.JsonToCam(camJson);
         cameraSaves.push_back(save);
+    }
+}
+
+void ObjectManager::DrawAnimationEditorInImGui(Object& obj)
+{
+    char newAnimationName[256] = { 0 }; 
+
+    ImGui::Begin("Animation Editor");
+
+    if (ImGui::Button("Play Animation") && obj.currentAnimation && obj.currentAnimation->isAnimating == false)
+    {
+        obj.currentAnimation->isAnimating = true;
+    }
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("Stop Animation") && obj.currentAnimation && obj.currentAnimation->isAnimating == true)
+    {
+        obj.currentAnimation->isAnimating = false;
+    }
+
+    std::string currentAnimationName;
+    if (obj.currentAnimation != nullptr)
+    {
+        currentAnimationName = obj.currentAnimation->name;
+    }
+
+    std::vector<std::string> animationNames;
+    for (const auto& animation : obj.animations)
+    {
+        animationNames.push_back(animation.name);
+    }
+
+    if (ImGui::BeginCombo("Animations", currentAnimationName.c_str()))
+    {
+        for (const auto& name : animationNames)
+        {
+            bool is_selected = (obj.currentAnimation->name == name);
+            if (ImGui::Selectable(name.c_str(), is_selected))
+            {
+                obj.currentAnimation = Animation::FindByName(obj.animations, name);
+            }
+            if (is_selected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+
+    if (obj.currentAnimation != nullptr )
+    {
+        ImGui::Separator();
+        ImGui::Text("Current Animation: %s", obj.currentAnimation->name.c_str());
+
+        for (size_t i = 0; i < obj.currentAnimation->frames.size(); ++i)
+        {
+            ImGui::PushID(static_cast<int>(i));
+            ImGui::Text("Frame %d", static_cast<int>(i));
+            ImGui::DragFloat3("Position", glm::value_ptr(obj.currentAnimation->frames[i].position));
+            ImGui::DragFloat2("Scale", &obj.currentAnimation->frames[i].scale[0]);
+            ImGui::DragFloat("Rotation", &obj.currentAnimation->frames[i].rotation);
+            ImGui::InputFloat("Time Until Next Frame", &obj.currentAnimation->frames[i].timeUntilNextFrame);
+            ImGui::PopID();
+            ImGui::Separator();
+        }
+
+        // Add new frame
+        if (ImGui::Button("Add Frame"))
+        {
+            AnimationFrame newFrame;
+            newFrame.position = obj.position;
+            newFrame.scale = obj.scale;
+            newFrame.rotation = obj.rotation;
+            newFrame.timeUntilNextFrame = 1.0f;
+            newFrame.texture = loadTexture(obj.texturePath.c_str());
+            obj.currentAnimation->frames.push_back(newFrame);
+        }
+
+        // Remove selected frame
+        if (ImGui::Button("Remove Last Frame") && !obj.currentAnimation->frames.empty())
+        {
+            obj.currentAnimation->frames.pop_back();
+        }
+    }
+
+    if (ImGui::Button("Add Animation"))
+    {
+        showAddAnimationPopup = true;
+    }
+
+    ImGui::End();
+
+    if (showAddAnimationPopup)
+    {
+        ImGui::Begin("New Animation");
+
+        char textBuffer[128];
+        std::strncpy(textBuffer, mewAnimationName.c_str(), sizeof(textBuffer));
+        if (ImGui::InputText("New animation name", textBuffer, sizeof(textBuffer))) {
+            mewAnimationName = std::string(textBuffer);
+        }
+
+        if (ImGui::Button("Add"))
+        {
+            Animation mewAnimation;
+            mewAnimation.name = mewAnimationName;
+            obj.animations.push_back(mewAnimation);
+            auto curAnim = Animation::FindByName(obj.animations, mewAnimationName);
+            obj.currentAnimation = curAnim;
+
+            AnimationFrame newFrame;
+            newFrame.position = obj.position;
+            newFrame.scale = obj.scale;
+            newFrame.rotation = obj.rotation;
+            newFrame.timeUntilNextFrame = 1.0f;
+            newFrame.texture = obj.texture;
+            obj.currentAnimation->frames.push_back(newFrame);
+            
+            showAddAnimationPopup = false;
+        }
+
+        ImGui::End();
     }
 }

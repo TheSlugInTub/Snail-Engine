@@ -54,37 +54,26 @@ void MyScript::Update() {
         {
             if (!hasAnimated)
             {
-                std::vector<unsigned int> walkFrames = { loadTexture("Resources/Textures/walk/1.png"), loadTexture("Resources/Textures/walk/2.png"), loadTexture("Resources/Textures/walk/3.png"), loadTexture("Resources/Textures/walk/4.png"), loadTexture("Resources/Textures/walk/5.png"), loadTexture("Resources/Textures/walk/6.png"), loadTexture("Resources/Textures/walk/7.png"), loadTexture("Resources/Textures/walk/8.png"), loadTexture("Resources/Textures/walk/9.png"), loadTexture("Resources/Textures/walk/10.png"), loadTexture("Resources/Textures/walk/11.png"), loadTexture("Resources/Textures/walk/12.png"), loadTexture("Resources/Textures/walk/13.png") };
-                Animation walkAnimation(walkFrames, 0.047f);
-
-                bodyOne->AddAnimation("walk", walkAnimation);
-                bodyOne->SetCurrentAnimation("walk");
                 hasAnimated = true;
             }
 
             if (GetKey(Key::Left))
             {
                 bodyOne->isFlipped = true;
-                bodyOne->Animate();
                 b2Vec2 pos = bodyOne->body->GetPosition();
                 pos.x += -0.004 * MovementSpeed;
                 bodyOne->body->SetTransform(pos, bodyOne->body->GetAngle());
                 b2Vec2 force(-0.00001f, 0.0f);
                 bodyOne->body->ApplyForceToCenter(force, true);
             }
-            else if (GetKey(Key::Right))
+            else if (GetKey(Key::Right)) 
             {
                 bodyOne->isFlipped = false;
-                bodyOne->Animate();
                 b2Vec2 pos = bodyOne->body->GetPosition();
                 pos.x += 0.004 * MovementSpeed;
                 bodyOne->body->SetTransform(pos, bodyOne->body->GetAngle());
                 b2Vec2 force(0.00001f, 0.0f);
                 bodyOne->body->ApplyForceToCenter(force, true);
-            }
-            else
-            {
-                bodyOne->StopAnimating();
             }
 
             if (GetKeyDown(Key::Up))

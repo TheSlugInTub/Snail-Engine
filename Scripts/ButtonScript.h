@@ -28,6 +28,7 @@ public:
     glm::vec2 textScale = glm::vec2(1.0f);
     glm::vec2 buttonScale = glm::vec2(1.0f);
     glm::vec4 backgroundColor = glm::vec4(1.0f);
+    glm::vec4 hoverColor = glm::vec4(1.0f);
     int buttonIndex = -1;
     bool addedButton = false;
 };

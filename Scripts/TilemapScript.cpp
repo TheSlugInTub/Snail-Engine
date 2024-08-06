@@ -14,15 +14,12 @@ TilemapScript::~TilemapScript() = default;
 
 nlohmann::json TilemapScript::toJson() const
 {
-    return
-    {
-        {"scripts", nlohmann::json::array()}
-    };
+    return tilemap.toJson();
 }
 
 void TilemapScript::fromJson(const nlohmann::json& j)
 {
-
+    tilemap = Tilemap::fromJson(j);
 }
 
 std::string TilemapScript::getTypeName() const
@@ -54,7 +51,7 @@ void TilemapScript::Update() {
 
         unsigned int tex = loadTexture(currentTexturePath.c_str());
 
-        Tile tile(glm::vec2(roundedCoords.x, roundedCoords.y), tex);
+        Tile tile(glm::vec2(roundedCoords.x, roundedCoords.y), tex, currentTexturePath);
 
         tilemap.AddTile(tile);
     }

@@ -233,8 +233,11 @@ int main()
 				{
 					objectManager->LoadScenes();
 					objectManager->selectedSceneIndex = 0;
-					objectManager->LoadObjects(objectManager->scenes[objectManager->selectedSceneIndex], world);
-					objectManager->SaveObjects(objectManager->scenes[objectManager->selectedSceneIndex]);
+
+					if (objectManager->scenes.size() != 0)
+					{
+						objectManager->LoadObjects(objectManager->scenes[objectManager->selectedSceneIndex], world);
+					}
 				}
 			}
 
@@ -284,10 +287,20 @@ int main()
 		{
 			if (object->currentAnimation) {
 				object->currentAnimation->Update(0.016f);
-				object->texture = object->currentAnimation->GetCurrentFrame();
+				object->position = object->currentAnimation->GetCurrentFrame().position;
+				if (object->currentAnimation->GetCurrentFrame().scale != glm::vec2(0.0f))
+				{
+					object->scale = object->currentAnimation->GetCurrentFrame().scale;
+				}
+				object->rotation = object->currentAnimation->GetCurrentFrame().rotation;
+
+				object->body->SetTransform(b2Vec2(object->position.x, object->position.y), object->rotation);
+				object->position.z = object->position.z;
+				b2Vec2 force(0.00001f, 0.0f);
+				object->body->ApplyForceToCenter(force, true);
 			}
 		}
-
+		
 		//End of main loop.
 		glfwSwapBuffers(window);
 		glfwPollEvents();
