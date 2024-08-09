@@ -43,8 +43,7 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 	lastX = xpos;
 	lastY = ypos;
 
-	int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE);
-	if (state == GLFW_PRESS)
+	if (GetKey(Key::P))
 	{
 		camera.ProcessMouseMovement(xoffset, yoffset);
 	}
@@ -287,12 +286,16 @@ int main()
 		{
 			if (object->currentAnimation) {
 				object->currentAnimation->Update(0.016f);
-				object->position = object->currentAnimation->GetCurrentFrame().position;
+				if (object->currentAnimation->GetCurrentFrame().position != glm::vec3(0.0f))
+				{
+					object->position = object->currentAnimation->GetCurrentFrame().position;
+				}
 				if (object->currentAnimation->GetCurrentFrame().scale != glm::vec2(0.0f))
 				{
 					object->scale = object->currentAnimation->GetCurrentFrame().scale;
 				}
 				object->rotation = object->currentAnimation->GetCurrentFrame().rotation;
+				object->texture = object->currentAnimation->GetCurrentFrame().texture;
 
 				object->body->SetTransform(b2Vec2(object->position.x, object->position.y), object->rotation);
 				object->position.z = object->position.z;

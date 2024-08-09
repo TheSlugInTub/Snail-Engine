@@ -837,7 +837,7 @@ void ObjectManager::LoadCamera() {
 
 void ObjectManager::DrawAnimationEditorInImGui(Object& obj)
 {
-    char newAnimationName[256] = { 0 }; 
+    char newAnimationName[256] = { 0 };
 
     ImGui::Begin("Animation Editor");
 
@@ -880,7 +880,7 @@ void ObjectManager::DrawAnimationEditorInImGui(Object& obj)
         ImGui::EndCombo();
     }
 
-    if (obj.currentAnimation != nullptr )
+    if (obj.currentAnimation != nullptr)
     {
         ImGui::Separator();
         ImGui::Text("Current Animation: %s", obj.currentAnimation->name.c_str());
@@ -893,6 +893,21 @@ void ObjectManager::DrawAnimationEditorInImGui(Object& obj)
             ImGui::DragFloat2("Scale", &obj.currentAnimation->frames[i].scale[0]);
             ImGui::DragFloat("Rotation", &obj.currentAnimation->frames[i].rotation);
             ImGui::InputFloat("Time Until Next Frame", &obj.currentAnimation->frames[i].timeUntilNextFrame);
+
+            // Texture selecting for the animation.
+            if (ImGui::BeginCombo("Animation Texture", std::filesystem::path(obj.currentAnimation->frames[i].texturePath).filename().string().c_str())) {
+                for (const auto& path : texturePaths) {
+                    bool isSelected = (obj.currentAnimation->frames[i].texturePath == path);
+                    if (ImGui::Selectable(std::filesystem::path(path).filename().string().c_str(), isSelected)) {
+                        obj.currentAnimation->frames[i].texturePath = path;
+                        obj.currentAnimation->frames[i].texture = loadTexture(obj.currentAnimation->frames[i].texturePath.c_str());
+                    }
+                    if (isSelected) {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
             ImGui::PopID();
             ImGui::Separator();
         }
@@ -948,7 +963,7 @@ void ObjectManager::DrawAnimationEditorInImGui(Object& obj)
             newFrame.timeUntilNextFrame = 1.0f;
             newFrame.texture = obj.texture;
             obj.currentAnimation->frames.push_back(newFrame);
-            
+
             showAddAnimationPopup = false;
         }
 

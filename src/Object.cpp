@@ -216,3 +216,6 @@ void Object::StopAnimating() {
     }
 }
 
+void Object::SetCurrentAnimation(std::string& animationName) {
+    currentAnimation = Animation::FindByName(animations, animationName);
+}

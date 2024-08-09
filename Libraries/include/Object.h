@@ -30,6 +30,7 @@ public:
 	void RemoveChild(std::shared_ptr<Object> child);
 
 	void AddAnimation(Animation animation);
+	void SetCurrentAnimation(std::string& animationName);
 	void Animate();
 	void StopAnimating();
 

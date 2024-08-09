@@ -62,6 +62,7 @@ public:
 	void RenderBodyVertices(Shader& shader, Camera& camera, Object& object, const glm::mat4& view, const glm::mat4& projection);
 	void RenderCustomShape(Shader& shader, Camera& camera, Object& object, const glm::mat4& view, const glm::mat4& projection);
 	void RenderRope(std::vector<glm::vec2> points, const glm::mat4& view, const glm::mat4& projection);
+	void Render3dPoints(const std::vector<glm::vec3>& points, const glm::mat4& view, const glm::mat4& projection);
 	void RenderTilemap(Tilemap& tilemap, const glm::mat4& view, const glm::mat4& projection);
 
 	Shader defaultShader;

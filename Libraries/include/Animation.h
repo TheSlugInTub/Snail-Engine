@@ -12,6 +12,7 @@ struct AnimationFrame
     float rotation;
     unsigned int texture;
     float timeUntilNextFrame;
+    std::string texturePath = "";
 
     bool operator==(const AnimationFrame& other) const
     {

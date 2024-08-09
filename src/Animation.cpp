@@ -1,4 +1,5 @@
 #include "Animation.h"
+#include <iostream>
 
 Animation::Animation()
     : frameDuration(1.0f), currentTime(0.0f), currentFrame(0), isAnimating(false) {}
@@ -51,7 +52,7 @@ void Animation::Update(float deltaTime)
     currentFrameData.position = glm::mix(frameA.position, frameB.position, t);
     currentFrameData.scale = glm::mix(frameA.scale, frameB.scale, t);
     currentFrameData.rotation = glm::mix(frameA.rotation, frameB.rotation, t);
-    currentFrameData.texture = (t < 0.5f) ? frameA.texture : frameB.texture;
+    currentFrameData.texture = frames[currentFrame].texture;
 }
 
 AnimationFrame Animation::GetCurrentFrame() const 
