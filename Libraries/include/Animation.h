@@ -4,6 +4,8 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include <string>
+#include <json.hpp>
+#include <LoadTexture.h>
 
 struct AnimationFrame
 {
@@ -21,6 +23,32 @@ struct AnimationFrame
             rotation == other.rotation &&
             texture == other.texture &&
             timeUntilNextFrame == other.timeUntilNextFrame;
+    }
+
+    nlohmann::json toJson() const
+    {
+        nlohmann::json j = {
+            {"FramePosition", {position.x, position.y, position.z}},
+            {"FrameScale", {scale.x, scale.y}},
+            {"FrameRotation", rotation},
+            {"FrameTime", timeUntilNextFrame},
+            {"FrameTexture", texturePath}
+        };
+
+        return j;
+    }
+
+    static AnimationFrame fromJson(const nlohmann::json& j)
+    {
+        glm::vec3 position = { j["FramePosition"][0], j["FramePosition"][1], j["FramePosition"][2] };
+        glm::vec2 scale = { j["FrameScale"][0], j["FrameScale"][1] };
+        float rotation = j["FrameRotation"];
+        float timeUntilNextFrame = j["FrameTime"];
+        std::string texturePath = j["FrameTexture"];
+        unsigned int texture = TextureLoader::textureLoad(texturePath.c_str());
+
+        AnimationFrame frame(position, scale, rotation, texture, timeUntilNextFrame, texturePath);
+        return frame;
     }
 };
 
@@ -45,6 +73,9 @@ public:
     }
 
     static Animation* FindByName(const std::vector<Animation>& animations, const std::string& name);
+
+    nlohmann::json toJson() const;
+    static Animation fromJson(const nlohmann::json& j);
 
     std::vector<AnimationFrame> frames;
     std::string name;

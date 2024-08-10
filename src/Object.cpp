@@ -66,6 +66,18 @@ nlohmann::json Object::toJson() const {
         {"bodyStatic", bodyStatic}
     };
 
+    // Serialize animations
+    for (const auto& anim : animations) {
+        auto animationJson = anim.toJson();
+        j["animations"].push_back(animationJson);
+    }
+
+    if (j.contains("animations") && currentAnimation != nullptr)
+    {
+        j["currentAnimationName"] = currentAnimation->name;
+    }
+
+    // Serialize scripts
     for (const auto& script : scripts) {
         nlohmann::json scriptJson = script->toJson();
         scriptJson["type"] = script->getTypeName();
@@ -131,6 +143,16 @@ std::shared_ptr<Object> Object::fromJson(const nlohmann::json& j, b2World& world
     obj->shape = CustomShape::fromJson(j["shape"]);
     obj->body->SetTransform(b2Vec2(position.x, position.y), body->GetAngle());
     obj->bodyStatic = bodyStatic;
+    
+    if (j.contains("animations"))
+    {
+        for (const auto& animJson : j["animations"]) {
+            Animation anim = Animation::fromJson(animJson);
+            obj->animations.push_back(anim);
+        }
+
+        obj->currentAnimation = Animation::FindByName(obj->animations, j["currentAnimationName"]);
+    }
 
     for (const auto& scriptJson : j["scripts"]) {
         std::string typeName = scriptJson["type"];

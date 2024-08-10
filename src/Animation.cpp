@@ -76,3 +76,43 @@ Animation* Animation::FindByName(const std::vector<Animation>& animations, const
     }
     return nullptr;
 }
+
+nlohmann::json Animation::toJson() const
+{
+    nlohmann::json j = {
+        {"Name", name},
+        {"FrameDuration", frameDuration},
+        {"CurrentTime", currentTime},
+        {"CurrentFrame", currentFrame},
+        {"IsAnimating", isAnimating}
+    };
+
+    // Serialize frames
+    std::vector<nlohmann::json> framesJson;
+    for (const auto& frame : frames) {
+        framesJson.push_back(frame.toJson());
+    }
+    j["Frames"] = framesJson;
+
+    return j;
+}
+
+Animation Animation::fromJson(const nlohmann::json& j)
+{
+    Animation animation;
+    
+    animation.name = j["Name"];
+    animation.frameDuration = j["FrameDuration"];
+    animation.currentTime = j["CurrentTime"];
+    animation.currentFrame = j["CurrentFrame"];
+    animation.isAnimating = j["IsAnimating"];
+
+    // Deserialize frames
+    if (j.contains("Frames")) {
+        for (const auto& frameJson : j["Frames"]) {
+            animation.frames.push_back(AnimationFrame::fromJson(frameJson));
+        }
+    }
+
+    return animation;
+}

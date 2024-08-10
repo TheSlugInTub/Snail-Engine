@@ -161,6 +161,7 @@
     <ClCompile Include="Scripts\LightScript.cpp" />
     <ClCompile Include="src\EventSystem.cpp" />
     <ClCompile Include="src\glad.c" />
+    <ClCompile Include="src\LoadTexture.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\ObjectManager.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="Libraries\include\ContactListener.h" />
     <ClInclude Include="Libraries\include\EventSystem.h" />
     <ClInclude Include="Libraries\include\ft2build.h" />
+    <ClInclude Include="Libraries\include\LoadTexture.h" />
     <ClInclude Include="Libraries\include\Tilemap.h" />
     <ClInclude Include="Scripts\ButtonScript.h" />
     <ClInclude Include="Scripts\ShadowCasterScript.h" />
