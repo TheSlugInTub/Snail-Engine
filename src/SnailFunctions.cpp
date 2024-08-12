@@ -203,11 +203,11 @@ void setWindowIcon(GLFWwindow* window, const char* iconPath) {
     }
 }
 
-void InvokeFunction(std::function<void()> func, int delayMilliseconds) {
+void InvokeFunction(std::function<void()> func, int delaySeconds) {
     // Create a new thread to execute the function after the delay
-    std::thread([func, delayMilliseconds]() {
+    std::thread([func, delaySeconds]() {
         // Sleep for the specified duration
-        std::this_thread::sleep_for(std::chrono::seconds(delayMilliseconds));
+        std::this_thread::sleep_for(std::chrono::seconds(delaySeconds));
         // Call the provided function
         func();
         }).detach(); // Detach the thread so it runs independently

@@ -72,8 +72,10 @@ public:
             currentFrameData == other.currentFrameData;
     }
 
+    // Returns a pointer to the animation that is found by its name in a vector of animations.
     static Animation* FindByName(const std::vector<Animation>& animations, const std::string& name);
 
+    // Serialization functions.
     nlohmann::json toJson() const;
     static Animation fromJson(const nlohmann::json& j);
 
@@ -83,6 +85,8 @@ public:
     float currentTime;
     int currentFrame;
     bool isAnimating;
+
+    // Current frame.
     AnimationFrame currentFrameData;
 private:
 

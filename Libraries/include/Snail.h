@@ -1,5 +1,7 @@
 #pragma once
 
+// Header files to include all other header files in the project
+
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
@@ -16,12 +18,12 @@
 #include <glm/gtx/norm.hpp>
 
 #include <Box2D/box2d/box2d.h>
+#include <stb_image.h>
 
 #include <Window.h>
 #include <SnailFunctions.h>
 #include <Shader.h>
 #include <Camera.h>
-#include <stb_image.h>
 #include <ObjectManager.h>
 #include <Object.h>
 #include <Renderer.h>

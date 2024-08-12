@@ -71,9 +71,14 @@ public:
     glm::vec2 worldToScreenSpace(const glm::vec3& worldCoords);
     float GetAspectRatio();
 
+    // Loads and saves the camera save.
     void SaveOriginal();
     void LoadOriginal();
+
+    // Saves the vector of corners which is used for rendering the camer outline by calling GetFrustumCorners.
     void SaveFrustumCorners();
+
+    // Gets four corners of the camera for rendering the camera outline in editor mode.
     std::vector<glm::vec2> GetFrustumCorners();
 
     void updateCameraVectors();

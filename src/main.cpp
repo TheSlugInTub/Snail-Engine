@@ -4,6 +4,7 @@
 
 void processInput(GLFWwindow* window);
 
+// Data for Box2D physics
 bool worldStep;
 float timeStep = 1.0f / 15.0f;
 int32 velocityIterations = 6;
@@ -14,16 +15,24 @@ const unsigned int screenHeight = 1080;
 
 Camera camera(glm::vec3(0.0f, 0.0f, 10.0f));
 
+// Mouse stuff.
 float lastX = (float)screenWidth / 2.0;
 float lastY = (float)screenHeight / 2.0;
 bool firstMouse = true;
 
+// FPS stuff.
 std::string FPS;
 auto lastTime = std::chrono::high_resolution_clock::now();
 int frameCount = 0;
 float fps = 0.0f;
 
+// First frame or not.
 bool started;
+
+/*
+If this is set to true, then it will load the scenes in the Data folder and hide the editor
+letting you actually play the game.
+*/
 bool playMode = false;
 
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
@@ -59,6 +68,8 @@ int main()
 	camera.SaveOriginal();
 	camera.SaveFrustumCorners();
 
+	// Initalizes ImGui.
+
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -71,8 +82,10 @@ int main()
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
 
+	// Creates the Box2D world
 	b2World world(b2Vec2(0.0f, -0.5f));
 	
+	// Creates all essential classes and makes them global via the ScriptFactory.
 	std::unique_ptr<ObjectManager> objectManager = std::make_unique<ObjectManager>();
 	std::unique_ptr<Renderer> renderer = std::make_unique<Renderer>();
 	CollisionListener* collisionListener = new CollisionListener();
@@ -85,6 +98,7 @@ int main()
 	ScriptFactory::Instance().SetEventSystem(eventSystem);
 	world.SetContactListener(collisionListener);
 
+	// FPS stuff.
 	double prevTime = 0.0;
 	double currentTime = 0.0;
 	double timeDiff;
@@ -121,6 +135,7 @@ int main()
 		//Main loop.
 		processInput(window);
 
+		// Updates phyics.
 		if (worldStep) { world.Step(timeStep, velocityIterations, positionIterations); }
 
 		ObjectManager* objectManager = ScriptFactory::Instance().GetManager();
@@ -138,6 +153,7 @@ int main()
 
 				if (playMode)
 				{
+					// Loads scenes if playmode is set to true.
 					objectManager->LoadScenes();
 					objectManager->selectedSceneIndex = 0;
 					objectManager->LoadObjects(objectManager->scenes[objectManager->selectedSceneIndex], world);
@@ -149,11 +165,6 @@ int main()
 
 				started = true;
 			}
-		}
-
-		if (GetKeyDown(Key::Escape))
-		{
-			glfwSetWindowShouldClose(window, true);
 		}
 
 		Canvas* canvas = ScriptFactory::Instance().GetCanvas();

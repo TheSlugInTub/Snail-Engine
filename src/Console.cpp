@@ -3,6 +3,7 @@
 std::vector<std::string> Console::messages;
 bool Console::scrollToBottom = false;
 
+// Logs a message to the console
 void Console::Log(const std::string& message)
 {
     messages.push_back(message);

@@ -60,7 +60,7 @@ public:
         globalRenderer = std::move(manager);
     }
 
-    // Get the global object manager
+    // Get the global renderer
     Renderer* GetRenderer() const
     {
         return globalRenderer.get();
@@ -71,7 +71,7 @@ public:
         globalListener = &manager;
     }
 
-    // Get the global object manager
+    // Get the global collision listener
     CollisionListener* GetListener() const
     {
         return globalListener;
@@ -82,7 +82,7 @@ public:
         globalCanvas = &manager;
     }
 
-    // Get the global object manager
+    // Get the global object canvas
     Canvas* GetCanvas() const
     {
         return globalCanvas;
@@ -93,7 +93,7 @@ public:
         globalEventSystem = &manager;
     }
 
-    // Get the global object manager
+    // Get the global object event system
     EventSystem* GetEventSystem() const
     {
         return globalEventSystem;
