@@ -234,12 +234,8 @@ void Canvas::RenderCanvas()
 
         const std::string& text = item.text;
         const std::string& fontPath = item.font;
-
-        float buttonWidth = item.buttonSize.x;
-        float buttonHeight = item.buttonSize.y;
-        float x = item.position.x - buttonWidth / 2.0f;
-        float y = item.position.y - buttonHeight / 2.0f;
-
+        float x = item.position.x;
+        float y = item.position.y;
         glm::vec2 scale = item.textSize; // Scaling factors for x and y
         glm::vec3 color = glm::vec3(item.textColor.x, item.textColor.y, item.textColor.z);
 
@@ -250,22 +246,25 @@ void Canvas::RenderCanvas()
         float maxHeight = 0.0f;
         for (auto c = text.begin(); c != text.end(); ++c) {
             Character ch = Fonts[fontPath][*c];
-            totalWidth += (ch.Advance >> 6) * scale.x; // Advance is in 1/64 pixels
-            maxHeight = std::max(maxHeight, static_cast<float>(ch.Size.y));
+            totalWidth += (ch.Advance >> 6) * scale.x;
+            float characterHeight = ch.Size.y * scale.y;
+            if (characterHeight > maxHeight) {
+                maxHeight = characterHeight;
+            }
         }
 
-        // Adjust the starting position to center the text
-        float startX = x + (buttonWidth - totalWidth) / 2.0f;
-        float startY = y + (buttonHeight - maxHeight * scale.y) / 2.0f;
+        // Adjust the starting x and y positions to center the text
+        float startX = x - totalWidth / 2.0f;
+        float startY = y - maxHeight / 2.0f;
 
         for (auto c = text.begin(); c != text.end(); ++c) {
             Character ch = Fonts[fontPath][*c];
 
-            float xpos = startX + ch.Bearing.x * scale.x; // Apply x scaling
-            float ypos = startY + (ch.Size.y - ch.Bearing.y) * scale.y; // Apply y scaling
+            float xpos = startX + ch.Bearing.x * scale.x;
+            float ypos = startY - (ch.Size.y - ch.Bearing.y) * scale.y;
 
-            float w = ch.Size.x * scale.x; // Apply x scaling
-            float h = ch.Size.y * scale.y; // Apply y scaling
+            float w = ch.Size.x * scale.x;
+            float h = ch.Size.y * scale.y;
             float vertices[6][4] = {
                 { xpos,     ypos + h,   0.0f, 0.0f },
                 { xpos,     ypos,       0.0f, 1.0f },
@@ -293,7 +292,7 @@ void Canvas::RenderCanvas()
 
             item.isHovered = true;
 
-            if (GetMouseButtonDown(MouseKey::LeftClick)) { 
+            if (GetMouseButtonDown(MouseKey::LeftClick)) {
                 ScriptFactory::Instance().GetEventSystem()->TriggerEvent(item.eventCallback);
             }
         }

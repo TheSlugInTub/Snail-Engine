@@ -73,6 +73,8 @@ public:
     void SetWorld(b2World& world);
 
     std::vector<std::string> texturePaths;
+    std::vector<std::string> fontPaths;
+
     std::vector<std::shared_ptr<Object>> objects;
     std::vector<Light> lights;
     std::vector<ShadowCaster> casters;

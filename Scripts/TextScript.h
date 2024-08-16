@@ -24,6 +24,7 @@ public:
 
     std::string objectName;
     std::string text;
+    std::string fontPath = "";
     int textIndex = -1;
     bool addedText = false;
 };

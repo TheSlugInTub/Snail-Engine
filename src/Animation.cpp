@@ -74,7 +74,7 @@ Animation* Animation::FindByName(const std::vector<Animation>& animations, const
             return const_cast<Animation*>(&animation);
         }
     }
-    return nullptr;
+    return nullptr; 
 }
 
 nlohmann::json Animation::toJson() const

@@ -24,7 +24,8 @@ nlohmann::json ButtonScript::toJson() const
         {"buttonScale", {buttonScale.x, buttonScale.y}},
         {"backgroundColor", {backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w}},
         {"hoverColor", {hoverColor.x, hoverColor.y, hoverColor.z, hoverColor.w}},
-        {"eventName", eventName}
+        {"eventName", eventName},
+        {"fontPath", fontPath}
     };
 }
 
@@ -39,6 +40,7 @@ void ButtonScript::fromJson(const nlohmann::json& j)
     backgroundColor = { j["backgroundColor"][0], j["backgroundColor"][1], j["backgroundColor"][2], j["backgroundColor"][3] };
     eventName = j["eventName"];
     hoverColor = { j["hoverColor"][0], j["hoverColor"][1], j["hoverColor"][2], j["hoverColor"][3] };
+    fontPath = j["fontPath"];
 }
 
 std::string ButtonScript::getTypeName() const
@@ -54,7 +56,7 @@ void ButtonScript::Start() {
         Canvas* canvas = ScriptFactory::Instance().GetCanvas();
         auto bodyOne = objectManager->FindObjectByName(objectName);
 
-        Button button(text, "Resources/Fonts/comic.ttf", glm::vec2(bodyOne->position.x, bodyOne->position.y), buttonScale, textScale, backgroundColor, bodyOne->color);
+        Button button(text, fontPath == "" ? "Resources/Fonts/newfont.ttf" : fontPath, glm::vec2(bodyOne->position.x, bodyOne->position.y), buttonScale, textScale, backgroundColor, bodyOne->color);
 
         canvas->AddButton(button);
 
@@ -70,7 +72,7 @@ void ButtonScript::Update() {
         Canvas* canvas = ScriptFactory::Instance().GetCanvas();
         auto bodyOne = objectManager->FindObjectByName(objectName);
 
-        Button button(text, "Resources/Fonts/comic.ttf", glm::vec2(bodyOne->position.x, bodyOne->position.y), buttonScale, textScale, backgroundColor, bodyOne->color);
+        Button button(text, fontPath == "" ? "Resources/Fonts/comic.ttf" : fontPath, glm::vec2(bodyOne->position.x, bodyOne->position.y), buttonScale, textScale, backgroundColor, bodyOne->color);
 
         canvas->AddButton(button);
 
@@ -127,6 +129,29 @@ void ButtonScript::DrawImGui() {
 
     ObjectManager* objectManager = ScriptFactory::Instance().GetManager();
     std::vector<std::string> objectNames = objectManager->FindAllObjectNames();
+    std::vector<std::string> fontPaths = objectManager->fontPaths;
+
+
+    if (ImGui::BeginCombo("Font Path", std::filesystem::path(fontPath).filename().string().c_str())) {
+
+        Canvas* canvas = ScriptFactory::Instance().GetCanvas();
+
+        for (const auto& path : fontPaths) {
+            bool isSelected = (fontPath == path);
+            if (ImGui::Selectable(std::filesystem::path(path).filename().string().c_str(), isSelected)) {
+                fontPath = path;
+                canvas->LoadFont(fontPath);
+                if (buttonIndex != -1)
+                {
+                    canvas->buttons[buttonIndex].font = fontPath;
+                }
+            }
+            if (isSelected) {
+                ImGui::SetItemDefaultFocus();
+            }
+        }
+        ImGui::EndCombo();
+    }
 
     if (ImGui::BeginCombo("Object", objectName.c_str()))
     {

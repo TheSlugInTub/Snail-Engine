@@ -24,6 +24,7 @@ public:
 
     std::string objectName = "";
     std::string text = "Text";
+    std::string fontPath = "";
     std::string eventName = "";
     glm::vec2 textScale = glm::vec2(1.0f);
     glm::vec2 buttonScale = glm::vec2(1.0f);

@@ -9,19 +9,18 @@ void ObjectManager::SetAllResources()
 {
     std::string directoryPath = "Resources/";
 
-    if (texturePaths.size() != 0)
-    {
-        texturePaths.clear();
-    }
+    texturePaths.clear();
 
     try {
         // Check if the provided path is a directory
         if (std::filesystem::is_directory(directoryPath)) {
             // Iterate over the directory entries
             for (const auto& entry : std::filesystem::recursive_directory_iterator(directoryPath)) {
-                // Check if the entry is a regular file and has a .png extension
+                // Check if the entry is a regular file and has a .png or .ttf extension
                 if (std::filesystem::is_regular_file(entry) && entry.path().extension() == ".png") {
                     texturePaths.push_back(entry.path().string());
+                }else if (std::filesystem::is_regular_file(entry) && entry.path().extension() == ".ttf") {
+                    fontPaths.push_back(entry.path().string());
                 }
             }
         }

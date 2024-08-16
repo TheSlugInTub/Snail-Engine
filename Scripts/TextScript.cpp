@@ -18,7 +18,8 @@ nlohmann::json TextScript::toJson() const
         {"objectName", objectName},
         {"textIndex", textIndex},
         {"addedText", addedText},
-        {"text", text}
+        {"text", text},
+        {"fontPath", fontPath}
     };
 }
 
@@ -28,6 +29,7 @@ void TextScript::fromJson(const nlohmann::json& j)
     addedText = j["addedText"];
     textIndex = j["textIndex"];
     text = j["text"];
+    fontPath = j["fontPath"];
 }
 
 std::string TextScript::getTypeName() const
@@ -43,7 +45,7 @@ void TextScript::Start() {
         Canvas* canvas = ScriptFactory::Instance().GetCanvas();
         auto bodyOne = objectManager->FindObjectByName(objectName);
 
-        Text text_l{ text, "Resources/Fonts/comic.ttf", bodyOne->scale, glm::vec2(bodyOne->position.x, bodyOne->position.y), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) };
+        Text text_l{ text, fontPath == "" ? "Resources/Fonts/newfont.ttf" : fontPath, bodyOne->scale, glm::vec2(bodyOne->position.x, bodyOne->position.y), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) };
 
         canvas->AddText(text_l);
 
@@ -59,7 +61,7 @@ void TextScript::Update() {
         Canvas* canvas = ScriptFactory::Instance().GetCanvas();
         auto bodyOne = objectManager->FindObjectByName(objectName);
         
-        Text textVar2{ text, "Resources/Fonts/comic.ttf", bodyOne->scale, glm::vec2(bodyOne->position.x, bodyOne->position.y), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) };
+        Text textVar2{ text, fontPath == "" ? "Resources/Fonts/newfont.ttf" : fontPath, bodyOne->scale, glm::vec2(bodyOne->position.x, bodyOne->position.y), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) };
 
         canvas->AddText(textVar2);
 
@@ -101,6 +103,29 @@ void TextScript::DrawImGui() {
 
     ObjectManager* objectManager = ScriptFactory::Instance().GetManager();
     std::vector<std::string> objectNames = objectManager->FindAllObjectNames();
+    std::vector<std::string> fontPaths = objectManager->fontPaths;
+
+    if (ImGui::BeginCombo("Font Path", std::filesystem::path(fontPath).filename().string().c_str())) {
+
+        Canvas* canvas = ScriptFactory::Instance().GetCanvas();
+
+        for (const auto& path : fontPaths) {
+            bool isSelected = (fontPath == path);
+            if (ImGui::Selectable(std::filesystem::path(path).filename().string().c_str(), isSelected)) {
+                fontPath = path;
+                canvas->LoadFont(fontPath);
+                if (textIndex != -1)
+                {
+                    canvas->texts[textIndex].font = fontPath;
+                }
+            }
+            if (isSelected) {
+                ImGui::SetItemDefaultFocus();
+            }
+        }
+        ImGui::EndCombo();
+    }
+
 
     if (ImGui::BeginCombo("Object", objectName.c_str()))
     {

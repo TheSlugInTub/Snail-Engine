@@ -74,13 +74,13 @@ public:
     void AddButton(Button& button);
     void RenderCanvas();
     void Clear();
+    void LoadFont(const std::string& fontPath);
 
     std::vector<Text> texts;
     std::vector<Button> buttons;
 
 private:
     void InitFreeType();
-    void LoadFont(const std::string& fontPath);
     void InitOpenGL();
     void LoadShader();
 
